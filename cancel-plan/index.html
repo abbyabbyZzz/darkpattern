@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancel Plan — Subscription Trap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
+      <div class="flex items-center justify-between px-6 py-4 h-24">
+        <a href="../index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
+        <div class="flex items-center gap-6" role="navigation" aria-label="Primary">
+          <a href="../index.html#home" class="nav-link text-white hover-bg-white-20">Home</a>
+          <a href="../index.html#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
+          <a href="../my-page/" class="nav-link text-white hover-bg-white-20">My Page</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow">
+      <section class="cancel-plan-page max-w-7xl mx-auto px-6">
+        <div class="cancel-top">
+          <p class="cancel-kicker">
+            <span class="cancel-user">User_4029</span>, you still have
+            <span data-cancel-remaining>24 hours left</span>
+            to enjoy your Prime benefits until the next billing cycle.
+          </p>
+          <p class="cancel-subcopy">Are you sure you want to leave us?</p>
+        </div>
+
+        <div class="cancel-benefits" aria-label="Membership benefits">
+          <div class="cancel-benefit cancel-benefit--blue">
+            <div class="cancel-circle" aria-hidden="true">
+              <!-- simple card/icon -->
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#2f6ea5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="7" width="16" height="12" rx="2"></rect>
+                <line x1="7" y1="11" x2="14" y2="11"></line>
+              </svg>
+            </div>
+            <div class="cancel-benefit__title">UNLIMITED ACCESS</div>
+            <div class="cancel-benefit__desc">No more paywalls or restrictions in the trap.</div>
+          </div>
+
+          <div class="cancel-benefit cancel-benefit--green">
+            <div class="cancel-circle" aria-hidden="true">
+              <!-- info / priority icon -->
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#62a45f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <line x1="12" y1="10" x2="12" y2="16"></line>
+                <line x1="12" y1="7.5" x2="12" y2="7.5"></line>
+              </svg>
+            </div>
+            <div class="cancel-benefit__title">PRIORITY SUPPORT</div>
+            <div class="cancel-benefit__desc">Get help from our top-tier AI agents instantly.</div>
+          </div>
+
+          <div class="cancel-benefit cancel-benefit--red">
+            <div class="cancel-circle" aria-hidden="true">
+              <!-- warning / sync icon -->
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#d84b5b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l9 16H3l9-16z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12" y2="17"></line>
+              </svg>
+            </div>
+            <div class="cancel-benefit__title">CLOUD SYNC</div>
+            <div class="cancel-benefit__desc">Access your progress from any device, anywhere.</div>
+          </div>
+        </div>
+
+        <div class="cancel-divider" aria-hidden="true"></div>
+
+        <div class="cancel-buttons" role="group" aria-label="Cancel membership actions">
+          <a class="cancel-btn cancel-btn--cancel" href="../cancelled/" data-cancel-final>
+            cancel membership
+          </a>
+          <button class="cancel-btn cancel-btn--keep" type="button" data-keep-membership>
+            KEEP MEMBERSHIP
+          </button>
+          <button class="cancel-btn cancel-btn--remind" type="button" data-remind-later>
+            remind me later
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-12 p-12 bg-win-black text-win-beige text-center border-t-8 border-win-blue">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md-grid-cols-3 gap-12 mb-12 text-left">
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SHOP</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>New Arrivals</li>
+              <li>Best Sellers</li>
+              <li>Sale</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SUPPORT</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>FAQ</li>
+              <li>Shipping</li>
+              <li>Returns</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">LEGAL</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>Terms of Service</li>
+              <li>Privacy Policy</li>
+              <li>Subscription Terms</li>
+            </ul>
+          </div>
+        </div>
+        <p class="text-sm opacity-50 font-bold">© 1995-2026 Subscription Trap Corp. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black-50 p-4 is-hidden" data-leave-overlay aria-hidden="true">
+      <div class="win-window leave-dialog" role="dialog" aria-modal="true" aria-label="Keep Membership">
+        <div class="win-title-bar">
+          <span>Before You Go</span>
+          <button class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red" type="button" data-leave-close aria-label="Close">
+            X
+          </button>
+        </div>
+        <div class="p-6 bg-win-beige text-center leave-dialog__body">
+          <div class="leave-face" aria-hidden="true">:(</div>
+          <p class="leave-copy">We’d hate to see you go…</p>
+          <div class="leave-actions">
+            <button class="renew-button leave-primary" type="button" data-leave-keep>Keep my benefits</button>
+            <button class="leave-secondary" type="button" data-leave-confirm>I’m okay losing my benefits</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second step: feedback prompt (same layout as retention modal) -->
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black-50 p-4 is-hidden" data-feedback-overlay aria-hidden="true">
+      <div class="win-window leave-dialog" role="dialog" aria-modal="true" aria-label="Feedback before you leave">
+        <div class="win-title-bar">
+          <span>Quick feedback</span>
+          <button class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red" type="button" data-feedback-close aria-label="Close">
+            X
+          </button>
+        </div>
+        <div class="p-6 bg-win-beige text-center leave-dialog__body">
+          <p class="leave-copy leave-feedback-line">We’d love your feedback before you leave.</p>
+          <p class="leave-copy leave-feedback-sub">It’ll only take a minute to help us understand what went wrong.</p>
+          <div class="leave-actions">
+            <button class="renew-button leave-primary" type="button" data-feedback-leave>Leave Feedback</button>
+            <button class="leave-secondary" type="button" data-feedback-skip>Skip, Continue cancellation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../main.js"></script>
+  </body>
+</html>
+

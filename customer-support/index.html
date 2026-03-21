@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Support — Subscription Trap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
+      <div class="flex items-center justify-between px-6 py-4 h-24">
+        <a href="../index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
+        <div class="flex items-center gap-6" role="navigation" aria-label="Primary">
+          <a href="../index.html#home" class="nav-link text-white hover-bg-white-20">Home</a>
+          <a href="../index.html#about" class="nav-link text-white hover-bg-white-20">About</a>
+          <a href="../index.html#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
+          <a href="../my-page/" class="nav-link text-white hover-bg-white-20">My Page</a>
+          <a href="./" class="nav-link text-white hover-bg-white-20" aria-current="page">Support</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow">
+      <div class="support-page max-w-7xl mx-auto px-6">
+        <a href="#" class="page-back" onclick="history.back(); return false;">← Back</a>
+
+        <header class="support-page-header">
+          <h1 class="support-page-title">Customer Support</h1>
+        </header>
+
+        <section class="section-card support-section mb-8">
+          <div class="win-title-bar bg-win-green text-win-black">FAQS</div>
+          <div class="bg-white support-faq-panel">
+            <p class="support-category">SUBSCRIPTION &amp; ACCOUNT</p>
+
+            <div class="support-accordion" role="region" aria-label="Frequently asked questions">
+              <details class="support-faq__item" name="support-faq">
+                <summary class="support-faq__summary">
+                  <span class="support-faq__question">How do I manage my subscription?</span>
+                  <span class="support-faq__icon" aria-hidden="true"></span>
+                </summary>
+                <div class="support-faq__body">
+                  <p>
+                    You can easily manage your subscription settings by visiting your account dashboard. From
+                    there, you’ll be able to review your plan details, update your preferences, and explore
+                    available options tailored to your needs.
+                  </p>
+                  <p>
+                    For the best experience, we recommend keeping your subscription active to enjoy
+                    uninterrupted access to all features.
+                  </p>
+                </div>
+              </details>
+
+              <details class="support-faq__item" name="support-faq">
+                <summary class="support-faq__summary">
+                  <span class="support-faq__question">How do I update my payment information?</span>
+                  <span class="support-faq__icon" aria-hidden="true"></span>
+                </summary>
+                <div class="support-faq__body">
+                  <p>
+                    To update your payment method, go to Account Settings → Payment Settings. From there, you
+                    can add, remove, or edit your billing information securely.
+                  </p>
+                  <p>
+                    Please note that removing a payment method does not affect your current subscription
+                    status.
+                  </p>
+                </div>
+              </details>
+
+              <details class="support-faq__item" name="support-faq">
+                <summary class="support-faq__summary">
+                  <span class="support-faq__question">How to cancel membership?</span>
+                  <span class="support-faq__icon" aria-hidden="true"></span>
+                </summary>
+                <div class="support-faq__body">
+                  <p>We’re sorry to hear you’re considering leaving.</p>
+                  <p>
+                    You can explore different options for your membership by visiting your account settings,
+                    where you may adjust your plan, update your preferences, or review available alternatives.
+                  </p>
+                  <p>Many users find that switching plans or pausing their subscription better suits their needs.</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card support-section" aria-labelledby="support-contact-heading">
+          <div class="win-title-bar bg-win-pink text-win-black">CONTACT SUPPORT</div>
+          <div class="p-10 bg-white">
+            <h2 id="support-contact-heading" class="support-contact__title mb-4 font-pixel leading-tight">
+              Still need help? Write us a message
+            </h2>
+            <p class="support-contact__desc text-lg leading-relaxed mb-8 font-medium">
+              Our support team is here to assist you. Leave us a message and we’ll get back to you as soon as
+              possible.
+            </p>
+            <form class="support-contact__form" id="support-contact-form" novalidate>
+              <label class="support-contact__label visually-hidden" for="support-message">Your message</label>
+              <textarea
+                id="support-message"
+                class="support-contact__textarea"
+                name="message"
+                rows="5"
+                placeholder="Describe your issue…"
+              ></textarea>
+              <button type="submit" class="win-button support-contact__submit bg-win-blue text-white border-win-blue">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="mt-12 p-12 bg-win-black text-win-beige text-center border-t-8 border-win-blue">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md-grid-cols-3 gap-12 mb-12 text-left">
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SHOP</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>New Arrivals</li>
+              <li>Best Sellers</li>
+              <li>Sale</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SUPPORT</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li><a href="./" class="underline">FAQ</a></li>
+              <li>Shipping</li>
+              <li>Returns</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">LEGAL</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>Terms of Service</li>
+              <li>Privacy Policy</li>
+              <li>Subscription Terms</li>
+            </ul>
+          </div>
+        </div>
+        <p class="text-sm opacity-50 font-bold">© 1995-2026 Subscription Trap Corp. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black-50 p-4 is-hidden"
+      id="support-success-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="support-success-title"
+      aria-hidden="true"
+    >
+      <div class="win-window max-w-md w-full" role="document">
+        <div class="win-title-bar bg-win-green text-win-black">
+          <span class="text-10 font-pixel">Support</span>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
+          <p id="support-success-title" class="text-lg font-bold text-win-black leading-relaxed">
+            Your message has been received
+          </p>
+          <button type="button" class="win-button text-12 px-8 bg-win-blue text-white border-win-blue" id="support-success-close">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const form = document.getElementById("support-contact-form");
+        const textarea = document.getElementById("support-message");
+        const modal = document.getElementById("support-success-modal");
+        const closeBtn = document.getElementById("support-success-close");
+
+        function openModal() {
+          modal.classList.remove("is-hidden");
+          modal.setAttribute("aria-hidden", "false");
+          closeBtn.focus();
+        }
+
+        function closeModal() {
+          modal.classList.add("is-hidden");
+          modal.setAttribute("aria-hidden", "true");
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          textarea.value = "";
+          openModal();
+        });
+
+        closeBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) closeModal();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !modal.classList.contains("is-hidden")) closeModal();
+        });
+      })();
+    </script>
+  </body>
+</html>

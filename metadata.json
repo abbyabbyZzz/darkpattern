@@ -1,0 +1,5 @@
+{
+  "name": "Subscription Trap: Escape the Dark Pattern",
+  "description": "A timed escape game where players must resist and identify dark patterns to cancel a subscription.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Subscription — Subscription Trap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
+      <div class="flex items-center justify-between px-6 py-4 h-24">
+        <a href="../index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
+        <div class="flex items-center gap-6" role="navigation" aria-label="Primary">
+          <a href="../index.html#home" class="nav-link text-white hover-bg-white-20">Home</a>
+          <a href="../index.html#about" class="nav-link text-white hover-bg-white-20">About</a>
+          <a href="../index.html#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
+          <a href="../my-page/" class="nav-link text-white hover-bg-white-20">My Page</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow">
+      <section class="manage-page max-w-7xl mx-auto px-6">
+        <a href="#" class="page-back" onclick="history.back(); return false;">← Back</a>
+
+        <div class="manage-top">
+          <p class="manage-label">Current Plan:</p>
+          <div class="manage-plan">PRO PLAN</div>
+          <button class="manage-upgrade" type="button">Upgrade to higher level</button>
+        </div>
+
+        <section class="manage-options">
+          <ul class="account-settings__list">
+            <li class="switch-plan-item">
+              <button type="button" class="account-option account-option--toggle" data-switch-plan-trigger aria-expanded="false">
+                Switch plan
+              </button>
+              <ul class="manage-suboptions" data-switch-plan-panel>
+                <li><a href="#" class="account-option account-option--sub">Basic plan</a></li>
+                <li><a href="#" class="account-option account-option--sub">Pro plan</a></li>
+                <li><a href="#" class="account-option account-option--sub">Ultimate plan</a></li>
+              </ul>
+            </li>
+            <li><a href="#" class="account-option">Save 20% on annual plan</a></li>
+            <li class="more-options-item">
+              <button type="button" class="account-option account-option--toggle" data-more-options-trigger aria-expanded="false">
+                More options
+              </button>
+              <ul class="manage-suboptions" data-more-options-panel>
+                <li><a href="../customer-support/" class="account-option account-option--sub">Customer support</a></li>
+                <li><a href="#" class="account-option account-option--sub">FAQ</a></li>
+                <li><a href="#" class="account-option account-option--sub">Billing history</a></li>
+                <li>
+                  <button type="button" class="account-option account-option--sub account-option--toggle" data-preferences-trigger aria-expanded="false">
+                    Preferences
+                  </button>
+                  <ul class="manage-suboptions manage-suboptions--nested" data-preferences-panel>
+                    <li>
+                      <div class="account-option account-option--sub account-option--group">Email preferences</div>
+                      <ul class="manage-suboptions manage-suboptions--deep is-open">
+                        <li><a href="#" class="account-option account-option--sub">Receive product updates</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Promotions &amp; special offers</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Weekly newsletter</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Personalized recommendations</a></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <div class="account-option account-option--sub account-option--group">Notification preferences</div>
+                      <ul class="manage-suboptions manage-suboptions--deep is-open">
+                        <li><a href="#" class="account-option account-option--sub">Push notifications</a></li>
+                        <li><a href="#" class="account-option account-option--sub">In-app messages</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Subscription reminders</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Renewal notifications</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Plan updates</a></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <div class="account-option account-option--sub account-option--group">Subscription preferences</div>
+                      <ul class="manage-suboptions manage-suboptions--deep is-open">
+                        <li><a href="#" class="account-option account-option--sub">Remind me before renewal</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Improve recommendations</a></li>
+                        <li><a href="#" class="account-option account-option--sub">Adjust content preferences</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-cancel-trigger>Cancel subscription</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
+    <footer class="mt-12 p-12 bg-win-black text-win-beige text-center border-t-8 border-win-blue">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md-grid-cols-3 gap-12 mb-12 text-left">
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SHOP</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>New Arrivals</li>
+              <li>Best Sellers</li>
+              <li>Sale</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SUPPORT</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>FAQ</li>
+              <li>Shipping</li>
+              <li>Returns</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">LEGAL</h4>
+            <ul class="text-lg space-y-2 opacity-80">
+              <li>Terms of Service</li>
+              <li>Privacy Policy</li>
+              <li>Subscription Terms</li>
+            </ul>
+          </div>
+        </div>
+        <p class="text-sm opacity-50 font-bold">© 1995-2026 Subscription Trap Corp. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black-50 p-4 is-hidden" data-cancel-overlay aria-hidden="true">
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-label="Cancel Subscription">
+        <div class="win-title-bar">
+          <span>Cancel Subscription</span>
+          <button class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red" type="button" data-cancel-close aria-label="Close">
+            X
+          </button>
+        </div>
+        <div class="p-6 bg-white text-center">
+          <p class="cancel-copy">Are You Sure?</p>
+          <div class="cancel-actions">
+            <button class="renew-button cancel-primary" type="button" data-cancel-primary>I'll keep my plan</button>
+            <button class="cancel-secondary" type="button" data-cancel-continue>Continue to cancel membership</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../main.js"></script>
+  </body>
+</html>
+

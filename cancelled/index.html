@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancelled — Subscription Trap</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <script>
+      try {
+        localStorage.setItem('subscriptionCancelled', '1');
+      } catch (e) {}
+    </script>
+    <main class="max-w-5xl mx-auto px-6 py-20">
+      <div class="win-window">
+        <div class="win-title-bar">Membership Cancelled</div>
+        <div class="p-12 bg-white text-center">
+          <h1 class="text-3xl font-pixel">You're all set</h1>
+          <p class="text-xl text-win-dark-gray mb-12 font-bold">This is a placeholder confirmation page.</p>
+          <a class="win-button" href="../my-page/">Back to My Page</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+
