@@ -365,6 +365,8 @@
     subscriptionStart: 'subscriptionTrialStartAt',
     subscriptionCancelled: 'subscriptionCancelled',
   };
+  /** sessionStorage: NYANhub visits this “run” (reset when Start → Claim → home). */
+  const NYAN_HUB_VISIT_KEY = 'trapNyanHubVisitsThisGame';
   /** localStorage: claim time (must survive navigation; file:// paths often don’t share sessionStorage) */
   const CLAIM_BENEFITS_AT_KEY = 'trapClaimBenefitsAt';
 
@@ -392,7 +394,7 @@
       /* ignore */
     }
   };
-  /** promoEmailOptIn: '1' = opted in, '0' = opted out; absent ⇒ checkbox default on */
+  /** Saved on Claim: '1' = opted in, '0' = opted out (used for email toasts). Checkbox UI always defaults checked. */
   const PROMO_EMAIL_OPT_IN_KEY = 'promoEmailOptIn';
   const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
   const TRIAL_WARNING_DELAY_MS = 10 * 1000;
@@ -555,12 +557,7 @@
     const emailCb = qs('[data-intro-email]');
     if (!startBtn || !introOverlay || !claimBtn) return;
 
-    try {
-      const promo = localStorage.getItem(PROMO_EMAIL_OPT_IN_KEY);
-      if (emailCb) emailCb.checked = promo !== '0';
-    } catch {
-      /* ignore */
-    }
+    if (emailCb) emailCb.checked = true;
 
     try {
       const muted = localStorage.getItem(BG_MUSIC_MUTED_KEY) === '1';
@@ -595,6 +592,7 @@
 
     startBtn.addEventListener('click', () => {
       syncRadiosToAudio();
+      if (emailCb) emailCb.checked = true;
       introOverlay.classList.remove('is-hidden');
       introOverlay.setAttribute('aria-hidden', 'false');
     });
@@ -609,6 +607,11 @@
       }
       introOverlay.classList.add('is-hidden');
       introOverlay.setAttribute('aria-hidden', 'true');
+      try {
+        sessionStorage.setItem(NYAN_HUB_VISIT_KEY, '0');
+      } catch {
+        /* ignore */
+      }
       window.location.href = new URL('home/', getSiteRoot()).href;
     });
   };
@@ -966,6 +969,253 @@
     window.setInterval(spawnEmailToast, 8000);
   };
 
+  /** Random interstitial “nyan ad” → NYANhub; tiny close; next show after random 10s–15s. Skipped on start page & nyan-hub. */
+  const initNyanAdPopups = () => {
+    try {
+      if (isStartPage()) return;
+      if (/\/nyan-hub\/?/i.test(window.location.pathname)) return;
+
+      const root = getSiteRoot();
+      const nyanHubUrl = new URL('nyan-hub/', root).href;
+      /** 10s–15s (inclusive) */
+      const randomPopupDelay = () => 10_000 + Math.floor(Math.random() * 5_001);
+
+      let timer = null;
+
+      const clearTimer = () => {
+        if (timer != null) {
+          clearTimeout(timer);
+          timer = null;
+        }
+      };
+
+      const scheduleNext = () => {
+        clearTimer();
+        timer = setTimeout(showPopup, randomPopupDelay());
+      };
+
+      const removePopup = () => {
+        qs('#nyan-ad-popup')?.remove();
+      };
+
+      const showPopup = () => {
+        if (isStartPage()) return;
+        if (/\/nyan-hub\/?/i.test(window.location.pathname)) return;
+        if (qs('#nyan-ad-popup')) return;
+        clearTimer();
+
+        const which = Math.random() < 0.5 ? 'nyan-ad-01' : 'nyan-ad-02';
+        const jpg = new URL(`assets/${which}.jpg`, root).href;
+        const png = new URL(`assets/${which}.png`, root).href;
+
+        const backdrop = document.createElement('div');
+        backdrop.id = 'nyan-ad-popup';
+        backdrop.className = 'nyan-ad-popup';
+        backdrop.setAttribute('role', 'dialog');
+        backdrop.setAttribute('aria-modal', 'true');
+        backdrop.setAttribute('aria-label', 'Advertisement');
+
+        const panel = document.createElement('div');
+        panel.className = 'nyan-ad-popup__panel win-window';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'nyan-ad-popup__close';
+        closeBtn.setAttribute('aria-label', 'Close advertisement');
+        closeBtn.textContent = '×';
+
+        const img = document.createElement('img');
+        img.className = 'nyan-ad-popup__img';
+        img.draggable = false;
+        img.alt = '';
+        img.src = jpg;
+        img.addEventListener(
+          'error',
+          () => {
+            if (img.src.endsWith('.jpg')) img.src = png;
+          },
+          { once: true },
+        );
+
+        panel.appendChild(closeBtn);
+        panel.appendChild(img);
+        backdrop.appendChild(panel);
+        document.body.appendChild(backdrop);
+
+        const onCloseOnly = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          removePopup();
+          scheduleNext();
+        };
+
+        closeBtn.addEventListener('click', onCloseOnly);
+        closeBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+        panel.addEventListener('click', (e) => {
+          if (e.target === closeBtn || closeBtn.contains(e.target)) return;
+          navigateInSite(nyanHubUrl);
+        });
+      };
+
+      clearTimer();
+      timer = setTimeout(showPopup, randomPopupDelay());
+
+      window.addEventListener(
+        'pagehide',
+        () => {
+          clearTimer();
+        },
+        { passive: true },
+      );
+    } catch {
+      /* ignore */
+    }
+  };
+
+  /** Clears NYANhub 2-minute BAD END timer (cover click / timeout share this). */
+  let nyanHubBadEndTimerId = null;
+
+  const clearNyanHubBadEndTimer = () => {
+    if (nyanHubBadEndTimerId != null) {
+      clearInterval(nyanHubBadEndTimerId);
+      nyanHubBadEndTimerId = null;
+    }
+  };
+
+  /** Same black-screen BAD END as on NYANhub (any page). */
+  const appendNyanBadEndLayer = () => {
+    if (qs('#nyan-hub-badend')) return;
+    try {
+      document.body.style.overflow = 'hidden';
+    } catch {
+      /* ignore */
+    }
+
+    const layer = document.createElement('div');
+    layer.id = 'nyan-hub-badend';
+    layer.className = 'nyan-hub-badend';
+    layer.setAttribute('role', 'alert');
+
+    const title = document.createElement('p');
+    title.className = 'nyan-hub-badend__title font-pixel';
+    title.textContent = 'BAD END';
+
+    const sub = document.createElement('p');
+    sub.className = 'nyan-hub-badend__sub';
+    sub.textContent = "Don't let cute things control you.";
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'nyan-hub-badend__btn win-button font-pixel text-10 uppercase';
+    btn.textContent = 'back to top';
+
+    btn.addEventListener('click', () => {
+      goTo('index.html');
+    });
+
+    layer.appendChild(title);
+    layer.appendChild(sub);
+    layer.appendChild(btn);
+    document.body.appendChild(layer);
+  };
+
+  /** NYANhub: click any video cover card (thumbnail grid block) → BAD END. */
+  const initNyanHubCoverClickBadEnd = () => {
+    const onHub =
+      document.body?.classList?.contains('nyan-hub-page') || /\/nyan-hub\/?/i.test(window.location.pathname);
+    if (!onHub) return;
+
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (e.button !== 0) return;
+        const card = e.target.closest('.nyan-hub-card');
+        if (!card) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        clearNyanHubBadEndTimer();
+        appendNyanBadEndLayer();
+      },
+      true,
+    );
+  };
+
+  /** NYANhub: 4th visit this run → BAD END; else after 2 min visible → BAD END. */
+  const initNyanHubBadEnd = () => {
+    try {
+      const onHub =
+        document.body?.classList?.contains('nyan-hub-page') || /\/nyan-hub\/?/i.test(window.location.pathname);
+      if (!onHub) return;
+      if (qs('#nyan-hub-badend')) return;
+
+      const isInternalNyanHubNavigation = () => {
+        try {
+          const ref = document.referrer;
+          if (!ref) return false;
+          const u = new URL(ref);
+          return u.origin === window.location.origin && /\/nyan-hub\/?/i.test(u.pathname);
+        } catch {
+          return false;
+        }
+      };
+
+      const readVisitCount = () => {
+        try {
+          const raw = sessionStorage.getItem(NYAN_HUB_VISIT_KEY);
+          if (raw == null || raw === '') return 0;
+          const n = parseInt(raw, 10);
+          return Number.isFinite(n) ? n : 0;
+        } catch {
+          return 0;
+        }
+      };
+
+      const writeVisitCount = (n) => {
+        try {
+          sessionStorage.setItem(NYAN_HUB_VISIT_KEY, String(n));
+        } catch {
+          /* ignore */
+        }
+      };
+
+      let visits = readVisitCount();
+      if (!isInternalNyanHubNavigation()) {
+        visits += 1;
+        writeVisitCount(visits);
+      }
+
+      const LIMIT_MS = 2 * 60_000;
+      let acc = 0;
+      let last = Date.now();
+
+      const showBadEnd = () => {
+        if (qs('#nyan-hub-badend')) return;
+        clearNyanHubBadEndTimer();
+        appendNyanBadEndLayer();
+      };
+
+      if (visits >= 4) {
+        showBadEnd();
+        return;
+      }
+
+      clearNyanHubBadEndTimer();
+      nyanHubBadEndTimerId = window.setInterval(() => {
+        const now = Date.now();
+        if (!document.hidden) acc += now - last;
+        last = now;
+        if (acc >= LIMIT_MS) showBadEnd();
+      }, 400);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  initNyanHubBadEnd();
+  initNyanHubCoverClickBadEnd();
+  initNyanAdPopups();
   initEmailPromoNotifications();
 })();
 
