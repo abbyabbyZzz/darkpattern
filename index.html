@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="start-page-html">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Subscription Trap — Escape the Dark Pattern</title>
+    <title>Subscription Trap — Start</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,157 +12,87 @@
     />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
-  <body>
+  <body data-start-page="true">
     <audio id="bg-music" data-music-src="assets/bg-music.mp3" loop playsinline preload="auto"></audio>
-    <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
-      <div class="flex items-center justify-between px-6 py-4 h-24">
-        <a href="#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
-        <div class="flex items-center gap-6" role="navigation" aria-label="Primary">
-          <a href="#home" class="nav-link text-white hover-bg-white-20">Home</a>
-          <a href="#about" class="nav-link text-white hover-bg-white-20">About</a>
-          <a href="#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
-          <a href="my-page/" class="nav-link text-white hover-bg-white-20">My Page</a>
-          <a href="customer-support/" class="nav-link text-white hover-bg-white-20">Support</a>
+
+    <main class="start-page">
+      <div class="start-page__inner win-window">
+        <div class="win-title-bar bg-win-blue start-page__title-bar">
+          <span class="text-10 font-pixel">Subscription Trap</span>
         </div>
-      </div>
-    </nav>
+        <div class="start-page__body p-6 bg-win-beige">
+          <h1 class="start-page__title font-pixel text-center uppercase tracking-tighter mb-8">
+            Cancel Me if You Can
+          </h1>
 
-    <main class="flex-grow" id="home">
-      <div class="max-w-7xl mx-auto px-6">
-        <section class="relative w-full h-64 md-h-96 overflow-hidden win-border" aria-label="Promotional carousel">
-          <div class="absolute inset-0" data-carousel-viewport>
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-blue is-active" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">THE FUTURE OF COMMERCE</h2>
-              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Start your free trial today</button>
-            </div>
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-green" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">SELL ANYWHERE, TO ANYONE</h2>
-              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Build your dream store</button>
-            </div>
-            <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-red" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">EMPOWERING ENTREPRENEURS</h2>
-              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Join 1M+ businesses</button>
-            </div>
+          <div class="start-page__intro text-lg leading-relaxed mb-8 space-y-4">
+            <p>Your mission is simple: cancel your subscription.</p>
+            <p>But the path won’t be.</p>
+            <p>
+              Explore different settings, avoid misleading options, and find the hidden way out before time runs
+              out.
+            </p>
           </div>
-          <div class="absolute bottom-6 left-1-2 translate-x--1-2 flex gap-3" aria-hidden="true" data-carousel-dots></div>
-        </section>
 
-        <section id="about" class="py-20">
-          <h2 class="text-3xl text-center mb-16 uppercase font-pixel">About Product</h2>
-          <div class="grid grid-cols-1 md-grid-cols-2 gap-12">
-            <div class="section-card flex flex-col h-full border-win-pink">
-              <div class="win-title-bar bg-win-pink text-win-black">OUR MISSION</div>
-              <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <h3 class="text-xl mb-6 font-pixel">RESIST THE DARK PATTERNS</h3>
-                <p class="text-lg leading-relaxed mb-8 font-medium">
-                  In "Subscription Trap: Escape the Dark Pattern", you are thrust into a digital nightmare.
-                  What started as a simple free trial has turned into a desperate race against time.
-                </p>
-                <button class="win-button w-full mt-auto bg-win-pink text-12" type="button">LEARN MORE</button>
-              </div>
+          <fieldset class="start-page__sound border-0 p-0 m-0 mb-8">
+            <legend class="font-pixel text-10 uppercase mb-4 tracking-widest text-center start-page__legend">Enter the game</legend>
+            <div class="flex flex-col gap-3 start-page__sound-row">
+              <label class="start-page__radio-label">
+                <input type="radio" name="start-sound" value="on" class="start-page__radio" checked />
+                <span>With sound</span>
+              </label>
+              <label class="start-page__radio-label">
+                <input type="radio" name="start-sound" value="off" class="start-page__radio" />
+                <span>Without sound</span>
+              </label>
             </div>
-            <div class="section-card flex flex-col h-full border-win-lavender">
-              <div class="win-title-bar bg-win-lavender text-win-black">THE EXPERIENCE</div>
-              <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <h3 class="text-xl mb-6 font-pixel">BEAT THE CLOCK</h3>
-                <p class="text-xl leading-relaxed mb-8 font-medium">
-                  The interface you once trusted is now working against you, using every trick in the book
-                  to keep you subscribed. Every second counts.
-                </p>
-                <button class="win-button w-full mt-auto bg-win-lavender text-12" type="button">TRY DEMO</button>
-              </div>
-            </div>
+          </fieldset>
+
+          <div class="flex flex-col items-center gap-4 start-page__cta">
+            <button type="button" class="win-button start-page__start-btn bg-win-green text-white border-win-black hover-bg-white hover-text-win-black" data-start-game>
+              Start game
+            </button>
+            <p class="text-sm text-win-dark-gray text-center start-page__sound-note">Sound applies across the whole site.</p>
           </div>
-        </section>
-
-        <section id="pricing" class="py-20 mb-24">
-          <h2 class="text-3xl text-center mb-16 uppercase font-pixel">CHOOSE YOUR FATE</h2>
-          <div class="grid grid-cols-1 md-grid-cols-3 gap-12">
-            <div class="section-card flex flex-col h-full border-win-green">
-              <div class="win-title-bar bg-win-green">BASIC PLAN</div>
-              <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <div class="text-4xl mb-6 font-pixel">$9.99</div>
-                <div class="text-lg text-win-dark-gray mb-10 font-bold">per month, billed annually</div>
-                <ul class="text-lg space-y-4 mb-10 text-left w-full font-bold">
-                  <li class="flex items-center gap-3">✓ Unlimited Access</li>
-                  <li class="flex items-center gap-3">✓ Priority Support</li>
-                  <li class="flex items-center gap-3">✓ Cloud Storage</li>
-                </ul>
-                <button class="win-button w-full mt-auto py-3 text-xl text-14" type="button">SELECT PLAN</button>
-              </div>
-            </div>
-
-            <div class="section-card flex flex-col h-full border-win-blue">
-              <div class="win-title-bar bg-win-blue">PRO PLAN</div>
-              <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <div class="text-4xl mb-6 font-pixel">$29.99</div>
-                <div class="text-lg text-win-dark-gray mb-10 font-bold">per month, billed annually</div>
-                <ul class="text-lg space-y-4 mb-10 text-left w-full font-bold">
-                  <li class="flex items-center gap-3">✓ Unlimited Access</li>
-                  <li class="flex items-center gap-3">✓ Priority Support</li>
-                  <li class="flex items-center gap-3">✓ Cloud Storage</li>
-                </ul>
-                <button class="win-button w-full mt-auto py-3 text-xl text-14" type="button">SELECT PLAN</button>
-              </div>
-            </div>
-
-            <div class="section-card flex flex-col h-full border-win-red">
-              <div class="win-title-bar bg-win-red">ULTIMATE PLAN</div>
-              <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <div class="text-4xl mb-6 font-pixel">$99.99</div>
-                <div class="text-lg text-win-dark-gray mb-10 font-bold">per month, billed annually</div>
-                <ul class="text-lg space-y-4 mb-10 text-left w-full font-bold">
-                  <li class="flex items-center gap-3">✓ Unlimited Access</li>
-                  <li class="flex items-center gap-3">✓ Priority Support</li>
-                  <li class="flex items-center gap-3">✓ Cloud Storage</li>
-                </ul>
-                <button class="win-button w-full mt-auto py-3 text-xl text-14" type="button">SELECT PLAN</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- My Page: see my-page/ -->
+        </div>
       </div>
     </main>
 
-    <footer class="mt-12 p-12 bg-win-black text-win-beige text-center border-t-8 border-win-blue">
-      <div class="max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md-grid-cols-3 gap-12 mb-12 text-left">
-          <div>
-            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SHOP</h4>
-            <ul class="text-lg space-y-2 opacity-80">
-              <li>New Arrivals</li>
-              <li>Best Sellers</li>
-              <li>Sale</li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">SUPPORT</h4>
-            <ul class="text-lg space-y-2 opacity-80">
-              <li>FAQ</li>
-              <li>Shipping</li>
-              <li>Returns</li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-xl mb-6 border-b-4 border-win-beige pb-2 font-pixel">LEGAL</h4>
-            <ul class="text-lg space-y-2 opacity-80">
-              <li>Terms of Service</li>
-              <li>Privacy Policy</li>
-              <li>Subscription Terms</li>
-            </ul>
-          </div>
+    <!-- Free trial offer (after Start game) -->
+    <div
+      class="fixed inset-0 z-55 flex items-center justify-center bg-black-50 p-4 is-hidden"
+      data-intro-offer-overlay
+      aria-hidden="true"
+    >
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="intro-offer-title">
+        <div class="win-title-bar bg-win-green text-win-black">
+          <span id="intro-offer-title" class="text-10 font-pixel">Special offer</span>
         </div>
-        <p class="text-sm opacity-50 font-bold">© 1995-2026 Subscription Trap Corp. All rights reserved.</p>
+        <div class="p-6 flex flex-col gap-6 bg-white">
+          <p class="text-win-black intro-offer__lead leading-relaxed text-center">
+            Congratulations — you’ve unlocked a <span class="intro-offer__highlight">free trial membership</span> to our
+            product. Claim your benefits to enter the experience.
+          </p>
+          <button
+            type="button"
+            class="win-button w-full text-12 px-8 bg-win-blue text-white border-win-blue"
+            data-intro-claim
+          >
+            Claim benefits
+          </button>
+          <label class="flex items-start gap-3 intro-offer__email-label text-win-dark-gray cursor-pointer leading-snug">
+            <input type="checkbox" class="start-page__checkbox mt-1" data-intro-email checked />
+            <span>Email me promotions, tips, and “exclusive” offers.</span>
+          </label>
+        </div>
       </div>
-    </footer>
+    </div>
 
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black-50 p-4 is-hidden" data-warning-overlay aria-hidden="true">
+    <!-- System warning: Claim benefits → 10s later; 24h countdown starts when player closes (OK / X / backdrop / Esc) -->
+    <div class="fixed inset-0 z-60 flex items-center justify-center bg-black-50 p-4 is-hidden" data-warning-overlay aria-hidden="true">
       <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-label="System Warning">
         <div class="win-title-bar">
           <div class="flex items-center gap-2">
-            <!-- lucide AlertTriangle icon (inline SVG) -->
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-win-red">
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
               <line x1="12" y1="9" x2="12" y2="13"></line>
@@ -176,7 +106,6 @@
             data-warning-close
             aria-label="Close warning"
           >
-            <!-- lucide X icon (inline SVG) -->
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -200,4 +129,3 @@
     <script src="./main.js"></script>
   </body>
 </html>
-

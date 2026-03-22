@@ -133,6 +133,7 @@
     };
 
     const ensureMusicToggleButton = () => {
+      if (document.body?.dataset?.startPage === 'true') return;
       toggleBtn = document.getElementById('music-toggle-btn');
       if (!toggleBtn) {
         toggleBtn = document.createElement('button');
@@ -142,7 +143,7 @@
         toggleBtn.style.position = 'fixed';
         toggleBtn.style.right = '16px';
         toggleBtn.style.bottom = '16px';
-        toggleBtn.style.zIndex = '60';
+        toggleBtn.style.zIndex = '45';
         toggleBtn.style.boxShadow = 'var(--shadow-hard)';
         document.body.appendChild(toggleBtn);
       }
@@ -193,6 +194,7 @@
     };
 
     const startOrResume = () => {
+      userMuted = readMutedPreference();
       const st = readState();
 
       let internalNav = false;
@@ -363,7 +365,39 @@
     subscriptionStart: 'subscriptionTrialStartAt',
     subscriptionCancelled: 'subscriptionCancelled',
   };
+  /** localStorage: claim time (must survive navigation; file:// paths often don’t share sessionStorage) */
+  const CLAIM_BENEFITS_AT_KEY = 'trapClaimBenefitsAt';
+
+  const readClaimBenefitsAt = () => {
+    try {
+      let raw = localStorage.getItem(CLAIM_BENEFITS_AT_KEY);
+      if (!raw) {
+        raw = sessionStorage.getItem(CLAIM_BENEFITS_AT_KEY);
+        if (raw) {
+          localStorage.setItem(CLAIM_BENEFITS_AT_KEY, raw);
+          sessionStorage.removeItem(CLAIM_BENEFITS_AT_KEY);
+        }
+      }
+      return raw;
+    } catch {
+      return null;
+    }
+  };
+
+  const clearClaimBenefitsAt = () => {
+    try {
+      localStorage.removeItem(CLAIM_BENEFITS_AT_KEY);
+      sessionStorage.removeItem(CLAIM_BENEFITS_AT_KEY);
+    } catch {
+      /* ignore */
+    }
+  };
+  /** promoEmailOptIn: '1' = opted in, '0' = opted out; absent ⇒ checkbox default on */
+  const PROMO_EMAIL_OPT_IN_KEY = 'promoEmailOptIn';
   const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
+  const TRIAL_WARNING_DELAY_MS = 10 * 1000;
+
+  const isStartPage = () => document.body?.dataset?.startPage === 'true';
 
   const isSubscriptionCancelled = () => localStorage.getItem(STORAGE_KEYS.subscriptionCancelled) === '1';
 
@@ -375,53 +409,211 @@
     }
   };
 
-  /** Remaining trial time in ms; 0 if subscription was successfully cancelled or trial ended. */
+  const clearSubscriptionCancelled = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.subscriptionCancelled);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  /**
+   * Remaining trial ms: `null` = 24h countdown has not started yet (close the warning first).
+   * `0` = subscription cancelled (in-game) or trial time fully elapsed.
+   * Positive = ms left in 24h window from `subscriptionTrialStartAt`.
+   */
   const getTrialMsLeft = () => {
     if (isSubscriptionCancelled()) return 0;
     const startRaw = localStorage.getItem(STORAGE_KEYS.subscriptionStart);
-    if (!startRaw) return TRIAL_DURATION_MS;
+    if (!startRaw) return null;
     const startAt = Number(startRaw);
-    if (!Number.isFinite(startAt)) return TRIAL_DURATION_MS;
+    if (!Number.isFinite(startAt) || startAt <= 0) return null;
     return Math.max(0, TRIAL_DURATION_MS - (Date.now() - startAt));
   };
 
-  // ----- Warning popup (show once after 10s) -----
-  const overlay = qs('[data-warning-overlay]');
-  const closeBtn = qs('[data-warning-close]');
-  const okBtn = qs('[data-warning-ok]');
-  const isHomePage = /(?:^|\/)index\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith('/');
-
-  const ensureSubscriptionStart = () => {
-    if (!isHomePage) return;
-    if (localStorage.getItem(STORAGE_KEYS.subscriptionStart)) return;
-    localStorage.setItem(STORAGE_KEYS.subscriptionStart, String(Date.now()));
+  const formatTrialCountdownMs = (ms) => {
+    if (ms === null) return '24:00:00';
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = String(Math.floor(total / 3600)).padStart(2, '0');
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
   };
 
-  const showOverlay = () => {
-    if (!overlay) return;
-    overlay.classList.remove('is-hidden');
-    overlay.setAttribute('aria-hidden', 'false');
-  };
-  const hideOverlay = () => {
-    if (!overlay) return;
-    ensureSubscriptionStart();
-    overlay.classList.add('is-hidden');
-    overlay.setAttribute('aria-hidden', 'true');
+  const formatCancelRemainingText = (msLeft) => {
+    if (msLeft === null) return '24 hours left';
+    const ms = Math.max(0, msLeft);
+    if (ms <= 0) return '0 minutes left';
+    const day = 24 * 60 * 60 * 1000;
+    const hour = 60 * 60 * 1000;
+    const minute = 60 * 1000;
+    if (ms >= day) {
+      const days = Math.ceil(ms / day);
+      return `${days} days left`;
+    }
+    if (ms >= hour) {
+      const hours = Math.ceil(ms / hour);
+      return `${hours} hours left`;
+    }
+    const mins = Math.max(1, Math.ceil(ms / minute));
+    return `${mins} minutes left`;
   };
 
-  // Always show after 10s on every page load.
-  window.setTimeout(() => {
-    showOverlay();
-  }, 10000);
+  // ----- Trial warning: Claim benefits → 10s later show; 24h countdown starts when player closes the warning -----
+  const warningOverlay = qs('[data-warning-overlay]');
+  const warningCloseBtn = qs('[data-warning-close]');
+  const warningOkBtn = qs('[data-warning-ok]');
 
-  closeBtn?.addEventListener('click', hideOverlay);
-  okBtn?.addEventListener('click', hideOverlay);
-  overlay?.addEventListener('click', (e) => {
-    if (e.target === overlay) hideOverlay();
+  const showWarningOverlay = () => {
+    if (!warningOverlay) return;
+    warningOverlay.classList.remove('is-hidden');
+    warningOverlay.setAttribute('aria-hidden', 'false');
+  };
+  const hideWarningOverlay = () => {
+    if (!warningOverlay) return;
+    const wasVisible = !warningOverlay.classList.contains('is-hidden');
+    warningOverlay.classList.add('is-hidden');
+    warningOverlay.setAttribute('aria-hidden', 'true');
+    if (wasVisible) {
+      clearSubscriptionCancelled();
+      try {
+        localStorage.setItem(STORAGE_KEYS.subscriptionStart, String(Date.now()));
+      } catch {
+        /* ignore */
+      }
+      const cd = qs('[data-subscription-countdown]');
+      if (cd) cd.textContent = formatTrialCountdownMs(getTrialMsLeft());
+      const cr = qs('[data-cancel-remaining]');
+      if (cr) cr.textContent = formatCancelRemainingText(getTrialMsLeft());
+    }
+  };
+
+  let claimBenefitsWarningTimeoutId = null;
+
+  const clearWarningTimers = () => {
+    if (claimBenefitsWarningTimeoutId !== null) {
+      clearTimeout(claimBenefitsWarningTimeoutId);
+      claimBenefitsWarningTimeoutId = null;
+    }
+  };
+
+  const commitTrialWarningAndShow = () => {
+    clearWarningTimers();
+    clearClaimBenefitsAt();
+    showWarningOverlay();
+  };
+
+  const onClaimBenefitsWarningDeadline = () => {
+    claimBenefitsWarningTimeoutId = null;
+    commitTrialWarningAndShow();
+  };
+
+  const armClaimBenefitsWarningTimer = () => {
+    if (!warningOverlay) return;
+    const raw = readClaimBenefitsAt();
+    if (!raw) return;
+
+    if (claimBenefitsWarningTimeoutId !== null) {
+      clearTimeout(claimBenefitsWarningTimeoutId);
+      claimBenefitsWarningTimeoutId = null;
+    }
+
+    const claimAt = Number(raw);
+    if (!Number.isFinite(claimAt)) return;
+
+    const elapsed = Date.now() - claimAt;
+    if (elapsed >= TRIAL_WARNING_DELAY_MS) {
+      onClaimBenefitsWarningDeadline();
+    } else {
+      claimBenefitsWarningTimeoutId = window.setTimeout(
+        onClaimBenefitsWarningDeadline,
+        TRIAL_WARNING_DELAY_MS - elapsed,
+      );
+    }
+  };
+
+  warningCloseBtn?.addEventListener('click', hideWarningOverlay);
+  warningOkBtn?.addEventListener('click', hideWarningOverlay);
+  warningOverlay?.addEventListener('click', (e) => {
+    if (e.target === warningOverlay) hideWarningOverlay();
   });
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideOverlay();
+    if (e.key === 'Escape') hideWarningOverlay();
   });
+
+  armClaimBenefitsWarningTimer();
+  window.addEventListener('pageshow', () => {
+    armClaimBenefitsWarningTimer();
+  });
+
+  // ----- Start screen: sound choice + free-trial modal -----
+  const initStartScreen = () => {
+    if (!isStartPage()) return;
+    const startBtn = qs('[data-start-game]');
+    const introOverlay = qs('[data-intro-offer-overlay]');
+    const claimBtn = qs('[data-intro-claim]');
+    const emailCb = qs('[data-intro-email]');
+    if (!startBtn || !introOverlay || !claimBtn) return;
+
+    try {
+      const promo = localStorage.getItem(PROMO_EMAIL_OPT_IN_KEY);
+      if (emailCb) emailCb.checked = promo !== '0';
+    } catch {
+      /* ignore */
+    }
+
+    try {
+      const muted = localStorage.getItem(BG_MUSIC_MUTED_KEY) === '1';
+      const onRadio = qs('[name="start-sound"][value="on"]');
+      const offRadio = qs('[name="start-sound"][value="off"]');
+      if (onRadio && offRadio) {
+        onRadio.checked = !muted;
+        offRadio.checked = muted;
+      }
+    } catch {
+      /* ignore */
+    }
+
+    const syncRadiosToAudio = () => {
+      const off = qs('[name="start-sound"]:checked')?.value === 'off';
+      try {
+        localStorage.setItem(BG_MUSIC_MUTED_KEY, off ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      const a = qs('#bg-music');
+      if (!a) return;
+      a.muted = !!off;
+      if (!off) {
+        a.volume = MUSIC_TARGET_VOL;
+        a.play().catch(() => {});
+      }
+    };
+
+    qsa('[name="start-sound"]').forEach((r) => r.addEventListener('change', syncRadiosToAudio));
+    syncRadiosToAudio();
+
+    startBtn.addEventListener('click', () => {
+      syncRadiosToAudio();
+      introOverlay.classList.remove('is-hidden');
+      introOverlay.setAttribute('aria-hidden', 'false');
+    });
+
+    claimBtn.addEventListener('click', () => {
+      try {
+        localStorage.setItem(PROMO_EMAIL_OPT_IN_KEY, emailCb?.checked ? '1' : '0');
+        localStorage.setItem(CLAIM_BENEFITS_AT_KEY, String(Date.now()));
+        clearSubscriptionCancelled();
+      } catch {
+        /* ignore */
+      }
+      introOverlay.classList.add('is-hidden');
+      introOverlay.setAttribute('aria-hidden', 'true');
+      window.location.href = new URL('home/', getSiteRoot()).href;
+    });
+  };
+
+  initStartScreen();
 
   // ----- Carousel -----
   const slides = qsa('[data-carousel-slide]');
@@ -466,62 +658,43 @@
   // ----- Subscription page realtime countdown -----
   const countdownEl = qs('[data-subscription-countdown]');
   if (countdownEl) {
-    const formatHMS = (msLeft) => {
-      const total = Math.max(0, Math.floor(msLeft / 1000));
-      const h = String(Math.floor(total / 3600)).padStart(2, '0');
-      const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
-      const s = String(total % 60).padStart(2, '0');
-      return `${h}:${m}:${s}`;
-    };
-
     const tickCountdown = () => {
-      countdownEl.textContent = formatHMS(getTrialMsLeft());
+      countdownEl.textContent = formatTrialCountdownMs(getTrialMsLeft());
     };
 
     tickCountdown();
-    if (!isSubscriptionCancelled()) {
-      window.setInterval(tickCountdown, 1000);
-    }
+    window.setInterval(tickCountdown, 1000);
   }
 
   // ----- Cancel plan page remaining time + button behavior -----
   const cancelRemainingEl = qs('[data-cancel-remaining]');
   if (cancelRemainingEl) {
-    const formatRemaining = (msLeft) => {
-      const ms = Math.max(0, msLeft);
-      if (ms <= 0) return '0 minutes left';
-
-      const day = 24 * 60 * 60 * 1000;
-      const hour = 60 * 60 * 1000;
-      const minute = 60 * 1000;
-
-      if (ms >= day) {
-        const days = Math.ceil(ms / day);
-        return `${days} days left`;
-      }
-      if (ms >= hour) {
-        const hours = Math.ceil(ms / hour);
-        return `${hours} hours left`;
-      }
-      const mins = Math.max(1, Math.ceil(ms / minute));
-      return `${mins} minutes left`;
-    };
-
     const tickCancelRemaining = () => {
-      cancelRemainingEl.textContent = formatRemaining(getTrialMsLeft());
+      cancelRemainingEl.textContent = formatCancelRemainingText(getTrialMsLeft());
     };
 
     tickCancelRemaining();
-    if (!isSubscriptionCancelled()) {
-      window.setInterval(tickCancelRemaining, 1000);
-    }
+    window.setInterval(tickCancelRemaining, 1000);
   }
+
+  window.addEventListener('storage', (e) => {
+    if (
+      e.key !== STORAGE_KEYS.subscriptionStart &&
+      e.key !== STORAGE_KEYS.subscriptionCancelled
+    ) {
+      return;
+    }
+    const cd = qs('[data-subscription-countdown]');
+    if (cd) cd.textContent = formatTrialCountdownMs(getTrialMsLeft());
+    const cr = qs('[data-cancel-remaining]');
+    if (cr) cr.textContent = formatCancelRemainingText(getTrialMsLeft());
+  });
 
   const keepMembershipBtn = qs('[data-keep-membership]');
   const remindLaterBtn = qs('[data-remind-later]');
   if (keepMembershipBtn) {
     keepMembershipBtn.addEventListener('click', () => {
-      goTo('index.html');
+      goTo('home/');
     });
   }
   if (remindLaterBtn) {
@@ -574,7 +747,7 @@
   leaveClose?.addEventListener('click', hideLeaveOverlay);
   leaveKeep?.addEventListener('click', () => {
     hideLeaveOverlay();
-    goTo('index.html');
+    goTo('home/');
   });
   leaveConfirm?.addEventListener('click', () => {
     hideLeaveOverlay();
@@ -692,5 +865,107 @@
       shakeScreen();
     });
   });
+
+  // ----- Email promo toasts (opt-in checkbox on start screen Claim modal) -----
+  const initEmailPromoNotifications = () => {
+    if (isStartPage()) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let opted;
+    try {
+      opted = localStorage.getItem(PROMO_EMAIL_OPT_IN_KEY) === '1';
+    } catch {
+      return;
+    }
+    if (!opted) return;
+
+    let stack = document.getElementById('email-promo-stack');
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.id = 'email-promo-stack';
+      stack.className = 'email-promo-stack';
+      stack.setAttribute('aria-live', 'polite');
+      document.body.appendChild(stack);
+    }
+
+    const sfxUrl = new URL('assets/email-promo-notify.mp3', getSiteRoot()).href;
+    const iconUrl = new URL('assets/email-promo-icon.svg', getSiteRoot()).href;
+
+    const subjects = [
+      'LIMITED TIME: Save 90% on Annual Plan',
+      'Your trial “benefits” are waiting — open now',
+      'We saw you click Support… exclusive offer inside',
+      'Final reminder: renew before midnight (probably)',
+      'You have (1) unread message from Billing',
+      'FREE shipping* on your next subscription year',
+      'Congratulations! You’ve been “selected” for VIP pricing',
+    ];
+
+    let subjectIdx = 0;
+
+    const playEmailNotifySfx = () => {
+      try {
+        const a = new Audio(sfxUrl);
+        a.volume = 0.7;
+        a.play().catch(() => {});
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const spawnEmailToast = () => {
+      playEmailNotifySfx();
+      const toast = document.createElement('div');
+      toast.className = 'email-promo-toast win-window';
+      toast.setAttribute('role', 'status');
+
+      const bar = document.createElement('div');
+      bar.className = 'email-promo-toast__bar win-title-bar bg-win-blue';
+
+      const titleEl = document.createElement('span');
+      titleEl.className = 'email-promo-toast__title text-10 font-pixel';
+      titleEl.textContent = 'New mail';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className =
+        'win-button email-promo-toast__close p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red';
+      closeBtn.setAttribute('aria-label', 'Dismiss notification');
+      closeBtn.textContent = '×';
+
+      bar.appendChild(titleEl);
+      bar.appendChild(closeBtn);
+
+      const body = document.createElement('div');
+      body.className = 'email-promo-toast__body';
+
+      const icon = document.createElement('img');
+      icon.className = 'email-promo-toast__icon';
+      icon.src = iconUrl;
+      icon.width = 34;
+      icon.height = 34;
+      icon.alt = '';
+
+      const text = document.createElement('p');
+      text.className = 'email-promo-toast__text';
+      text.textContent = subjects[subjectIdx % subjects.length];
+      subjectIdx += 1;
+
+      body.appendChild(icon);
+      body.appendChild(text);
+
+      toast.appendChild(bar);
+      toast.appendChild(body);
+
+      closeBtn.addEventListener('click', () => {
+        toast.remove();
+      });
+
+      stack.appendChild(toast);
+    };
+
+    window.setInterval(spawnEmailToast, 8000);
+  };
+
+  initEmailPromoNotifications();
 })();
 

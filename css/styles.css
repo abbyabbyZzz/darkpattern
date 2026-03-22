@@ -45,6 +45,8 @@ button { font-family: inherit; }
 .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
 .z-40 { z-index: 40; }
 .z-50 { z-index: 50; }
+.z-55 { z-index: 55; }
+.z-60 { z-index: 60; }
 .flex { display: flex; }
 .grid { display: grid; }
 .flex-col { flex-direction: column; }
@@ -277,6 +279,228 @@ button { font-family: inherit; }
 
 .is-hidden { display: none !important; }
 .leading-none { line-height: 1; }
+
+/* --- Start screen (game entry): full viewport, no scroll --- */
+html.start-page-html,
+html.start-page-html body[data-start-page] {
+  height: 100%;
+  overflow: hidden;
+}
+body[data-start-page] {
+  margin: 0;
+}
+.start-page {
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  margin: 0;
+  background: var(--win-beige);
+  overflow: hidden;
+}
+/* 起始页整窗用 win-beige，覆盖 .win-window 默认白底 */
+.start-page__inner.win-window {
+  background: var(--win-beige);
+}
+.start-page__inner {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+  border-radius: 0;
+}
+.start-page__title-bar {
+  flex-shrink: 0;
+}
+.start-page__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-top: 4px solid var(--win-black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding-left: clamp(1rem, 4vw, 2.5rem) !important;
+  padding-right: clamp(1rem, 4vw, 2.5rem) !important;
+  padding-top: clamp(1rem, 3vh, 2rem) !important;
+  padding-bottom: clamp(1rem, 3vh, 2rem) !important;
+}
+.start-page__title {
+  font-size: clamp(18px, 6.5vw, 42px);
+  line-height: 1.3;
+  max-width: 24ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.start-page__intro {
+  font-weight: 400;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.start-page__intro p {
+  font-weight: 400;
+  margin: 0;
+}
+.start-page__sound {
+  width: 100%;
+  max-width: 20rem;
+  text-align: center;
+}
+.start-page__legend {
+  width: 100%;
+}
+.start-page__sound-row {
+  align-items: stretch;
+}
+.start-page__radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: 10px 12px;
+  border: 2px solid var(--win-black);
+  background: var(--win-gray);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.start-page__radio-label:hover {
+  background: var(--win-black);
+  color: #fff;
+}
+.start-page__start-btn {
+  font-size: clamp(12px, 2.8vw, 16px) !important;
+  padding: 16px 28px !important;
+  min-width: min(100%, 280px);
+  box-shadow: var(--shadow-hard);
+}
+.start-page__sound-note {
+  font-weight: 500;
+}
+.start-page__radio {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--win-black);
+  flex-shrink: 0;
+}
+.start-page__checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--win-black);
+  flex-shrink: 0;
+}
+
+/* Intro offer modal typography */
+.intro-offer__lead {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 2.8vw, 1.25rem);
+  font-weight: 600;
+}
+.intro-offer__highlight {
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+.intro-offer__email-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* --- Email promo toasts (opt-in from start screen) --- */
+.email-promo-stack {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  width: min(380px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  align-items: flex-end;
+  z-index: 78;
+  overflow-y: auto;
+  overflow-x: hidden;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+.email-promo-toast {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: var(--shadow-hard);
+  pointer-events: auto;
+  animation: email-promo-in 180ms ease-out;
+}
+@keyframes email-promo-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 蓝色标题条占整体比例缩小（相对白色正文区） */
+.email-promo-toast .email-promo-toast__bar.win-title-bar {
+  padding: 5px 8px 6px;
+  min-height: 0;
+  line-height: 1.15;
+}
+.email-promo-toast__title {
+  flex: 1;
+  text-align: left;
+  font-size: 9px !important;
+  letter-spacing: 0.06em;
+}
+.email-promo-toast__close {
+  flex-shrink: 0;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  padding: 0 4px !important;
+  min-height: 0;
+}
+.email-promo-toast__body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 14px 16px;
+  background: #fff;
+  border-top: 3px solid var(--win-black);
+}
+.email-promo-toast__icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  color: var(--win-black);
+}
+.email-promo-toast__text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--win-black);
+  text-align: left;
+}
 
 /* --- My Page (screenshot style) --- */
 .account-page {
