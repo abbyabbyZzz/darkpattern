@@ -15,7 +15,9 @@ Pure static version (**HTML + CSS + vanilla JavaScript**), no Node.js / Vite / R
 
 - `index.html` — homepage (Home / About / Pricing)
 - `css/styles.css` — styling (Win95 / pixel-inspired visual style)
-- `main.js` — interactions (carousel, warning popup after 10s, countdown, modals, expandable menus)
+- `main.js` — interactions (carousel, warning popup after 10s, countdown, modals, expandable menus, background music + cross-page fade)
+- `assets/bg-music.mp3` — looping background music (place your MP3 here if missing)
+- `assets/sfx-shake.mp3` — wrong-option screen shake sound (from `cncl03.mp3`)
 - `my-page/` — account page
 - `subscription/` — subscription countdown
 - `manage-subscription/` — plan management

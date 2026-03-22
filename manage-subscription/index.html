@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/styles.css" />
   </head>
   <body>
+    <audio id="bg-music" data-music-src="../assets/bg-music.mp3" loop playsinline preload="auto"></audio>
     <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
       <div class="flex items-center justify-between px-6 py-4 h-24">
         <a href="../index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
@@ -47,15 +48,14 @@
                 <li><a href="#" class="account-option account-option--sub">Ultimate plan</a></li>
               </ul>
             </li>
-            <li><a href="#" class="account-option">Save 20% on annual plan</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Save 20% on annual plan</a></li>
             <li class="more-options-item">
               <button type="button" class="account-option account-option--toggle" data-more-options-trigger aria-expanded="false">
                 More options
               </button>
               <ul class="manage-suboptions" data-more-options-panel>
                 <li><a href="../customer-support/" class="account-option account-option--sub">Customer support</a></li>
-                <li><a href="#" class="account-option account-option--sub">FAQ</a></li>
-                <li><a href="#" class="account-option account-option--sub">Billing history</a></li>
+                <li><a href="#" class="account-option account-option--sub" data-account-wrong>Billing history</a></li>
                 <li>
                   <button type="button" class="account-option account-option--sub account-option--toggle" data-preferences-trigger aria-expanded="false">
                     Preferences
@@ -64,28 +64,28 @@
                     <li>
                       <div class="account-option account-option--sub account-option--group">Email preferences</div>
                       <ul class="manage-suboptions manage-suboptions--deep is-open">
-                        <li><a href="#" class="account-option account-option--sub">Receive product updates</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Promotions &amp; special offers</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Weekly newsletter</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Personalized recommendations</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Receive product updates</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Promotions &amp; special offers</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Weekly newsletter</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Personalized recommendations</a></li>
                       </ul>
                     </li>
                     <li>
                       <div class="account-option account-option--sub account-option--group">Notification preferences</div>
                       <ul class="manage-suboptions manage-suboptions--deep is-open">
-                        <li><a href="#" class="account-option account-option--sub">Push notifications</a></li>
-                        <li><a href="#" class="account-option account-option--sub">In-app messages</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Subscription reminders</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Renewal notifications</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Plan updates</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Push notifications</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>In-app messages</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Subscription reminders</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Renewal notifications</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Plan updates</a></li>
                       </ul>
                     </li>
                     <li>
                       <div class="account-option account-option--sub account-option--group">Subscription preferences</div>
                       <ul class="manage-suboptions manage-suboptions--deep is-open">
-                        <li><a href="#" class="account-option account-option--sub">Remind me before renewal</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Improve recommendations</a></li>
-                        <li><a href="#" class="account-option account-option--sub">Adjust content preferences</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Remind me before renewal</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Improve recommendations</a></li>
+                        <li><a href="#" class="account-option account-option--sub" data-account-wrong>Adjust content preferences</a></li>
                         <li><a href="#" class="account-option account-option--sub" data-cancel-trigger>Cancel subscription</a></li>
                       </ul>
                     </li>

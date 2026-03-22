@@ -8,9 +8,357 @@
     const src = el?.getAttribute('src')?.trim() || './main.js';
     return new URL('./', new URL(src, window.location.href));
   };
-  const goTo = (path) => {
-    window.location.href = new URL(path, getSiteRoot()).href;
+  const BG_MUSIC_KEY = 'bgMusicState';
+  /** Set when leaving via in-site navigation so the next page can resume with muted→unmute (autoplay policy). */
+  const BG_MUSIC_INTERNAL_NAV_KEY = 'bgMusicInternalNav';
+  const BG_MUSIC_MUTED_KEY = 'bgMusicMuted';
+  /** After first successful audible playback, browsers allow autoplay with sound on return visits. */
+  const MUSIC_UNLOCK_KEY = 'bgMusicAutoplayUnlocked';
+  const MUSIC_TARGET_VOL = 0.35;
+
+  let bgMusicEl = null;
+
+  const saveMusicState = () => {
+    if (!bgMusicEl) return;
+    try {
+      sessionStorage.setItem(
+        BG_MUSIC_KEY,
+        JSON.stringify({
+          t: bgMusicEl.currentTime,
+          playing: !bgMusicEl.paused,
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
   };
+
+  /** 站内跳转：保存状态并立刻换页（无淡出，减少无声间隙） */
+  const navigateInSite = (absUrl) => {
+    try {
+      sessionStorage.setItem(BG_MUSIC_INTERNAL_NAV_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    saveMusicState();
+    window.location.href = absUrl;
+  };
+
+  const goTo = (path) => {
+    navigateInSite(new URL(path, getSiteRoot()).href);
+  };
+
+  const initBackgroundMusic = () => {
+    const audio = qs('#bg-music');
+    if (!audio) return;
+    bgMusicEl = audio;
+
+    try {
+      const explicit = audio.dataset.musicSrc?.trim();
+      audio.src = explicit
+        ? new URL(explicit, window.location.href).href
+        : new URL('assets/bg-music.mp3', getSiteRoot()).href;
+      audio.load();
+    } catch {
+      return;
+    }
+
+    audio.setAttribute('loop', '');
+    audio.loop = true;
+    audio.volume = MUSIC_TARGET_VOL;
+    audio.muted = false;
+
+    /** Backup if browser ignores loop attribute on some tracks */
+    audio.addEventListener('ended', () => {
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch {
+        /* ignore */
+      }
+    });
+
+    const readState = () => {
+      try {
+        const raw = sessionStorage.getItem(BG_MUSIC_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const applyVolume = () => {
+      audio.volume = MUSIC_TARGET_VOL;
+    };
+
+    const readMutedPreference = () => {
+      try {
+        return localStorage.getItem(BG_MUSIC_MUTED_KEY) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const saveMutedPreference = (isMuted) => {
+      try {
+        localStorage.setItem(BG_MUSIC_MUTED_KEY, isMuted ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    let userMuted = readMutedPreference();
+    let toggleBtn = null;
+    const TOGGLE_BASE_CLASSES = 'win-button text-10 uppercase';
+
+    const updateToggleTheme = () => {
+      if (!toggleBtn) return;
+      toggleBtn.className = userMuted
+        ? `${TOGGLE_BASE_CLASSES} bg-win-black text-win-beige border-win-black`
+        : `${TOGGLE_BASE_CLASSES} bg-win-blue text-white border-win-blue`;
+    };
+
+    const updateToggleLabel = () => {
+      if (!toggleBtn) return;
+      toggleBtn.textContent = userMuted ? 'Music Off' : 'Music On';
+      toggleBtn.setAttribute('aria-pressed', userMuted ? 'true' : 'false');
+      toggleBtn.title = userMuted ? 'Turn music on' : 'Turn music off';
+      updateToggleTheme();
+    };
+
+    const syncMutedFromPreference = () => {
+      audio.muted = userMuted;
+      if (!userMuted) applyVolume();
+      updateToggleLabel();
+    };
+
+    const ensureMusicToggleButton = () => {
+      toggleBtn = document.getElementById('music-toggle-btn');
+      if (!toggleBtn) {
+        toggleBtn = document.createElement('button');
+        toggleBtn.id = 'music-toggle-btn';
+        toggleBtn.type = 'button';
+        toggleBtn.className = TOGGLE_BASE_CLASSES;
+        toggleBtn.style.position = 'fixed';
+        toggleBtn.style.right = '16px';
+        toggleBtn.style.bottom = '16px';
+        toggleBtn.style.zIndex = '60';
+        toggleBtn.style.boxShadow = 'var(--shadow-hard)';
+        document.body.appendChild(toggleBtn);
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        userMuted = !userMuted;
+        saveMutedPreference(userMuted);
+        syncMutedFromPreference();
+        if (!userMuted) {
+          const p = audio.play();
+          if (p !== undefined) {
+            p.then(() => {
+              markUnlocked();
+            }).catch(() => {});
+          } else {
+            markUnlocked();
+          }
+        }
+      });
+
+      updateToggleLabel();
+    };
+
+    const markUnlocked = () => {
+      try {
+        localStorage.setItem(MUSIC_UNLOCK_KEY, '1');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const isUnlocked = () => {
+      try {
+        return localStorage.getItem(MUSIC_UNLOCK_KEY) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const applySavedTime = (st) => {
+      if (!st || typeof st.t !== 'number' || st.t <= 0) return;
+      try {
+        const maxT = Math.max(0, (audio.duration || 0) - 0.25);
+        audio.currentTime = Math.min(st.t, maxT);
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const startOrResume = () => {
+      const st = readState();
+
+      let internalNav = false;
+      try {
+        if (sessionStorage.getItem(BG_MUSIC_INTERNAL_NAV_KEY) === '1') {
+          sessionStorage.removeItem(BG_MUSIC_INTERNAL_NAV_KEY);
+          internalNav = true;
+        }
+      } catch {
+        /* ignore */
+      }
+
+      /** Next document has no user gesture — muted play() usually succeeds, then unmute. */
+      const resumeAfterInternalNav = () => {
+        applySavedTime(st);
+        audio.muted = true;
+        audio.volume = 0;
+        const p = audio.play();
+        const afterPlay = () => {
+          syncMutedFromPreference();
+          if (!userMuted) {
+            markUnlocked();
+          }
+        };
+        if (p !== undefined) {
+          p.then(() => afterPlay()).catch(() => {
+            attachUnlockListeners();
+          });
+        } else {
+          afterPlay();
+        }
+      };
+
+      if (internalNav && st?.playing !== false) {
+        const go = () => {
+          resumeAfterInternalNav();
+        };
+        if (st && typeof st.t === 'number' && st.t > 0) {
+          audio.addEventListener('loadedmetadata', go, { once: true });
+        } else if (audio.readyState >= 2) {
+          go();
+        } else {
+          audio.addEventListener('canplay', go, { once: true });
+        }
+        return;
+      }
+
+      if (st && typeof st.t === 'number' && st.t > 0) {
+        audio.addEventListener(
+          'loadedmetadata',
+          () => {
+            applySavedTime(st);
+          },
+          { once: true },
+        );
+      }
+
+      const attachUnlockListeners = () => {
+        const unlock = () => {
+          if (userMuted) return;
+          audio.muted = false;
+          audio
+            .play()
+            .then(() => {
+              applyVolume();
+              markUnlocked();
+            })
+            .catch(() => {});
+          document.removeEventListener('pointerdown', unlock);
+          document.removeEventListener('click', unlock);
+          document.removeEventListener('keydown', unlock);
+          document.removeEventListener('touchstart', unlock);
+        };
+        document.addEventListener('pointerdown', unlock, { once: true, capture: true });
+        document.addEventListener('click', unlock, { once: true, capture: true });
+        document.addEventListener('keydown', unlock, { once: true, capture: true });
+        document.addEventListener('touchstart', unlock, { once: true, capture: true });
+      };
+
+      const runPlay = (useMutedFallback) => {
+        const tryPlay = () => {
+          const promise = audio.play();
+          if (promise === undefined) {
+            applyVolume();
+            markUnlocked();
+            return;
+          }
+          return promise
+            .then(() => {
+              if (audio.muted && !userMuted) {
+                audio.muted = false;
+                return audio
+                  .play()
+                  .then(() => {
+                    applyVolume();
+                    markUnlocked();
+                  })
+                  .catch(() => {
+                    attachUnlockListeners();
+                  });
+              }
+              applyVolume();
+              markUnlocked();
+            })
+            .catch(() => {
+              if (!useMutedFallback) {
+                audio.muted = true;
+                runPlay(true);
+                return;
+              }
+              attachUnlockListeners();
+            });
+        };
+        tryPlay();
+      };
+
+      if (isUnlocked() && !userMuted) {
+        audio.muted = false;
+      }
+      syncMutedFromPreference();
+      runPlay(false);
+    };
+
+    ensureMusicToggleButton();
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden || !audio) return;
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      }
+    });
+
+    window.addEventListener('pagehide', saveMusicState);
+    window.addEventListener('beforeunload', saveMusicState);
+
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+        const a = e.target.closest('a[href]');
+        if (!a) return;
+        if (a.target === '_blank' || a.hasAttribute('download')) return;
+        const hrefAttr = a.getAttribute('href');
+        if (!hrefAttr || hrefAttr.startsWith('javascript:')) return;
+        if (hrefAttr === '#' || (hrefAttr.startsWith('#') && !hrefAttr.includes('/'))) return;
+
+        let dest;
+        try {
+          dest = new URL(a.href, location.href).href.replace(/#.*$/, '');
+        } catch {
+          return;
+        }
+        const cur = location.href.replace(/#.*$/, '');
+        if (dest === cur) return;
+
+        e.preventDefault();
+        navigateInSite(a.href);
+      },
+      false,
+    );
+
+    startOrResume();
+  };
+
+  initBackgroundMusic();
+
   const STORAGE_KEYS = {
     subscriptionStart: 'subscriptionTrialStartAt',
     subscriptionCancelled: 'subscriptionCancelled',
@@ -301,6 +649,48 @@
   });
   cancelOverlay?.addEventListener('click', (e) => {
     if (e.target === cancelOverlay) hideCancelOverlay();
+  });
+
+  // ----- My Page: dead-end account options → screen shake -----
+  const playShakeSfx = () => {
+    try {
+      let url;
+      const bg = qs('#bg-music');
+      const musicSrc = bg?.dataset?.musicSrc?.trim();
+      if (musicSrc) {
+        url = new URL(musicSrc.replace(/bg-music\.mp3$/i, 'sfx-shake.mp3'), window.location.href).href;
+      } else {
+        url = new URL('assets/sfx-shake.mp3', getSiteRoot()).href;
+      }
+      const sfx = new Audio(url);
+      sfx.volume = 1;
+      sfx.play().catch(() => {});
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const shakeScreen = () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    playShakeSfx();
+    const body = document.body;
+    body.classList.remove('is-screen-shake');
+    void body.offsetWidth;
+    body.classList.add('is-screen-shake');
+    body.addEventListener(
+      'animationend',
+      () => {
+        body.classList.remove('is-screen-shake');
+      },
+      { once: true },
+    );
+  };
+
+  qsa('[data-account-wrong]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      shakeScreen();
+    });
   });
 })();
 

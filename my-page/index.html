@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/styles.css" />
   </head>
   <body>
+    <audio id="bg-music" data-music-src="../assets/bg-music.mp3" loop playsinline preload="auto"></audio>
     <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
       <div class="flex items-center justify-between px-6 py-4 h-24">
         <a href="../index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
@@ -52,11 +53,11 @@
           <h2 class="account-settings__title">ACCOUNT SETTINGS</h2>
           <div class="account-settings__rule"></div>
           <ul class="account-settings__list">
-            <li><a href="#" class="account-option">Order History</a></li>
-            <li><a href="#" class="account-option">Account Security</a></li>
-            <li><a href="#" class="account-option">Data &amp; Privacy Settings</a></li>
-            <li><a href="#" class="account-option">Payment Settings</a></li>
-            <li><a href="#" class="account-option">Deactivate Account</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Order History</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Account Security</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Data &amp; Privacy Settings</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Payment Settings</a></li>
+            <li><a href="#" class="account-option" data-account-wrong>Deactivate Account</a></li>
             <li><a href="../subscription/" class="account-option">Subscription</a></li>
           </ul>
         </section>
