@@ -606,6 +606,66 @@ nav {
 }
 
 /* ═══════════════════════
+   RESULTS
+═══════════════════════ */
+.results-card {
+  background: var(--pink-card);
+}
+
+.results-total {
+  font-family: var(--px);
+  font-size: 0.625rem;
+  color: var(--purple-dark);
+  margin-bottom: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.results-chart {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.results-row {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.results-row__label {
+  font-family: var(--px);
+  font-size: 0.5rem;
+  color: var(--purple-dark);
+  letter-spacing: 0.06em;
+}
+
+.results-row__bar-wrap {
+  width: 100%;
+  border: 3px solid var(--purple-dark);
+  background: var(--cream);
+  min-height: 22px;
+  box-shadow: 3px 3px 0 var(--purple-mid);
+  overflow: hidden;
+}
+
+.results-row__bar {
+  height: 100%;
+  min-height: 22px;
+  background: linear-gradient(90deg, var(--purple-mid), var(--red-px));
+  transition: width 0.25s ease;
+}
+
+.results-row__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--purple-mid);
+}
+
+.results-empty {
+  font-family: var(--font-sans);
+  color: var(--purple-mid);
+  font-size: 0.9rem;
+}
+
+/* ═══════════════════════
    SHARE
 ═══════════════════════ */
 .share-grid {

@@ -397,9 +397,12 @@
   /** Saved on Claim: '1' = opted in, '0' = opted out (used for email toasts). Checkbox UI always defaults checked. */
   const PROMO_EMAIL_OPT_IN_KEY = 'promoEmailOptIn';
   const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
-  const TRIAL_WARNING_DELAY_MS = 10 * 1000;
+  const TRIAL_WARNING_DELAY_MS = 5 * 1000;
 
   const isStartPage = () => document.body?.dataset?.startPage === 'true';
+  const isHomePage = () => /\/home\/?/i.test(window.location.pathname);
+  const isEndingPage = () => document.body?.dataset?.endingPage === 'true';
+  const isPopupDisabledPage = () => document.body?.dataset?.disablePopups === 'true';
 
   const isSubscriptionCancelled = () => localStorage.getItem(STORAGE_KEYS.subscriptionCancelled) === '1';
 
@@ -461,7 +464,7 @@
     return `${mins} minutes left`;
   };
 
-  // ----- Trial warning: Claim benefits → 10s later show; 24h countdown starts when player closes the warning -----
+  // ----- Trial warning: show 5s after entering home page; 24h countdown starts when player closes the warning -----
   const warningOverlay = qs('[data-warning-overlay]');
   const warningCloseBtn = qs('[data-warning-close]');
   const warningOkBtn = qs('[data-warning-ok]');
@@ -490,48 +493,23 @@
     }
   };
 
-  let claimBenefitsWarningTimeoutId = null;
+  let homeWarningTimeoutId = null;
 
   const clearWarningTimers = () => {
-    if (claimBenefitsWarningTimeoutId !== null) {
-      clearTimeout(claimBenefitsWarningTimeoutId);
-      claimBenefitsWarningTimeoutId = null;
+    if (homeWarningTimeoutId !== null) {
+      clearTimeout(homeWarningTimeoutId);
+      homeWarningTimeoutId = null;
     }
   };
 
-  const commitTrialWarningAndShow = () => {
+  const scheduleHomeWarning = () => {
     clearWarningTimers();
-    clearClaimBenefitsAt();
-    showWarningOverlay();
-  };
-
-  const onClaimBenefitsWarningDeadline = () => {
-    claimBenefitsWarningTimeoutId = null;
-    commitTrialWarningAndShow();
-  };
-
-  const armClaimBenefitsWarningTimer = () => {
-    if (!warningOverlay) return;
-    const raw = readClaimBenefitsAt();
-    if (!raw) return;
-
-    if (claimBenefitsWarningTimeoutId !== null) {
-      clearTimeout(claimBenefitsWarningTimeoutId);
-      claimBenefitsWarningTimeoutId = null;
-    }
-
-    const claimAt = Number(raw);
-    if (!Number.isFinite(claimAt)) return;
-
-    const elapsed = Date.now() - claimAt;
-    if (elapsed >= TRIAL_WARNING_DELAY_MS) {
-      onClaimBenefitsWarningDeadline();
-    } else {
-      claimBenefitsWarningTimeoutId = window.setTimeout(
-        onClaimBenefitsWarningDeadline,
-        TRIAL_WARNING_DELAY_MS - elapsed,
-      );
-    }
+    if (!warningOverlay || !isHomePage() || isPopupDisabledPage()) return;
+    if (getTrialMsLeft() !== null) return;
+    homeWarningTimeoutId = window.setTimeout(() => {
+      homeWarningTimeoutId = null;
+      showWarningOverlay();
+    }, TRIAL_WARNING_DELAY_MS);
   };
 
   warningCloseBtn?.addEventListener('click', hideWarningOverlay);
@@ -543,9 +521,9 @@
     if (e.key === 'Escape') hideWarningOverlay();
   });
 
-  armClaimBenefitsWarningTimer();
+  scheduleHomeWarning();
   window.addEventListener('pageshow', () => {
-    armClaimBenefitsWarningTimer();
+    scheduleHomeWarning();
   });
 
   // ----- Start screen: sound choice + free-trial modal -----
@@ -871,7 +849,7 @@
 
   // ----- Email promo toasts (opt-in checkbox on start screen Claim modal) -----
   const initEmailPromoNotifications = () => {
-    if (isStartPage()) return;
+    if (isStartPage() || isPopupDisabledPage()) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let opted;
     try {
@@ -972,7 +950,7 @@
   /** Random interstitial “nyan ad” → NYANhub; tiny close; next show after random 20s–60s. Skipped on start page & nyan-hub. */
   const initNyanAdPopups = () => {
     try {
-      if (isStartPage()) return;
+      if (isStartPage() || isPopupDisabledPage()) return;
       if (/\/nyan-hub\/?/i.test(window.location.pathname)) return;
 
       const root = getSiteRoot();
@@ -1073,6 +1051,170 @@
     }
   };
 
+  const ENDING_SURVEY_KEY = 'trapEndingSurveyResponses';
+  const FIREBASE_CONFIG = {
+    apiKey: 'AIzaSyCp40xxSnJ8wVpdnWCgvEG2zLS4FnmeTRQ',
+    authDomain: 'cct383-cd083.firebaseapp.com',
+    projectId: 'cct383-cd083',
+    storageBucket: 'cct383-cd083.firebasestorage.app',
+    messagingSenderId: '178903299455',
+    appId: '1:178903299455:web:34c4d47da7b3f2044d564a',
+    measurementId: 'G-NS2M2VWS1K',
+  };
+  const FIREBASE_TOTALS_COLLECTION = 'surveyTotals';
+  const FIREBASE_TOTALS_DOC = 'main';
+  const SURVEY_FIELD_MAP = {
+    'Hidden cancellation path': 'hiddenPath',
+    'Confirm shaming': 'confirmShaming',
+    'Misleading buttons': 'misleadingButtons',
+    'Fake customer support': 'fakeSupport',
+  };
+  let firebaseVoteApiPromise = null;
+
+  const formatElapsedDuration = (ms) => {
+    if (!Number.isFinite(ms) || ms < 1000) return 'under 1 second';
+    const total = Math.floor(ms / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  };
+
+  const saveEndingSurveyChoice = (choice) => {
+    try {
+      const raw = localStorage.getItem(ENDING_SURVEY_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      const next = Array.isArray(arr) ? arr : [];
+      next.push({ choice, at: Date.now() });
+      localStorage.setItem(ENDING_SURVEY_KEY, JSON.stringify(next));
+      return next.length;
+    } catch {
+      return null;
+    }
+  };
+
+  const getFirebaseVoteApi = async () => {
+    if (firebaseVoteApiPromise) return firebaseVoteApiPromise;
+    firebaseVoteApiPromise = (async () => {
+      const [{ initializeApp }, { getFirestore, doc, setDoc, increment, serverTimestamp }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'),
+      ]);
+      const app = initializeApp(FIREBASE_CONFIG, 'cct383-game-vote');
+      const db = getFirestore(app);
+      return {
+        setDoc,
+        increment,
+        serverTimestamp,
+        totalsRef: doc(db, FIREBASE_TOTALS_COLLECTION, FIREBASE_TOTALS_DOC),
+      };
+    })().catch((err) => {
+      firebaseVoteApiPromise = null;
+      throw err;
+    });
+    return firebaseVoteApiPromise;
+  };
+
+  const submitEndingSurveyChoiceToFirebase = async (choice) => {
+    try {
+      const field = SURVEY_FIELD_MAP[choice];
+      if (!field) return false;
+      const { setDoc, increment, serverTimestamp, totalsRef } = await getFirebaseVoteApi();
+      await setDoc(
+        totalsRef,
+        {
+          [field]: increment(1),
+          updatedAt: serverTimestamp(),
+          updatedAtMs: Date.now(),
+        },
+        { merge: true },
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const initEndingPageFlow = () => {
+    if (!isEndingPage()) return;
+
+    clearWarningTimers();
+    clearClaimBenefitsAt();
+
+    let elapsedMs = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.subscriptionStart);
+      const startAt = Number(raw);
+      if (Number.isFinite(startAt) && startAt > 0) {
+        elapsedMs = Math.max(0, Date.now() - startAt);
+      }
+      localStorage.removeItem(STORAGE_KEYS.subscriptionStart);
+      localStorage.removeItem(STORAGE_KEYS.subscriptionCancelled);
+    } catch {
+      /* ignore */
+    }
+
+    const stage1 = qs('[data-ending-stage="1"]');
+    const stage2 = qs('[data-ending-stage="2"]');
+    const stage3 = qs('[data-ending-stage="3"]');
+    const stage4 = qs('[data-ending-stage="4"]');
+    const to2Btn = qs('[data-ending-continue-1]');
+    const to3Btn = qs('[data-ending-continue-2]');
+    const submitBtn = qs('[data-ending-submit]');
+    const viewBtn = qs('[data-ending-view-results]');
+    const timeText = qs('[data-ending-time-text]');
+    const surveyForm = qs('[data-ending-survey-form]');
+    const surveyHint = qs('[data-ending-survey-hint]');
+    const surveyDone = qs('[data-ending-survey-done]');
+
+    if (timeText) {
+      const spent = formatElapsedDuration(elapsedMs);
+      timeText.textContent = `You cleared this level in ${spent}.`;
+    }
+
+    const showStage = (n) => {
+      [stage1, stage2, stage3, stage4].forEach((el, idx) => {
+        if (!el) return;
+        el.classList.toggle('is-hidden', idx !== n - 1);
+      });
+    };
+
+    showStage(1);
+
+    to2Btn?.addEventListener('click', () => showStage(2));
+    to3Btn?.addEventListener('click', () => showStage(3));
+
+    submitBtn?.addEventListener('click', async () => {
+      const selected = qs('input[name="ending-annoy"]:checked', surveyForm || document);
+      if (!selected) {
+        if (surveyHint) surveyHint.textContent = 'Please choose one option to submit.';
+        return;
+      }
+      if (surveyHint) surveyHint.textContent = '';
+      if (submitBtn) submitBtn.disabled = true;
+      const total = saveEndingSurveyChoice(selected.value);
+      const remoteOk = await submitEndingSurveyChoiceToFirebase(selected.value);
+      if (surveyDone) {
+        surveyDone.textContent =
+          total == null
+            ? remoteOk
+              ? 'Submitted successfully.'
+              : 'Submitted locally. Sync pending.'
+            : remoteOk
+              ? `Submitted successfully. ${total} responses collected so far.`
+              : `Submitted locally. ${total} responses collected on this device.`;
+      }
+      if (submitBtn) submitBtn.disabled = false;
+      showStage(4);
+    });
+
+    viewBtn?.addEventListener('click', () => {
+      goTo('../index.html#results');
+    });
+  };
+
   /** Clears NYANhub 2-minute BAD END timer (cover click / timeout share this). */
   let nyanHubBadEndTimerId = null;
 
@@ -1122,7 +1264,7 @@
     btn.textContent = 'back to top';
 
     btn.addEventListener('click', () => {
-      goTo('../index.html');
+      goTo('index.html');
     });
 
     layer.appendChild(title);
@@ -1260,6 +1402,7 @@
 
   initNyanHubBadEnd();
   initNyanHubCoverClickBadEnd();
+  initEndingPageFlow();
   initNyanAdPopups();
   initEmailPromoNotifications();
 })();

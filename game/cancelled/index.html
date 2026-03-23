@@ -3,25 +3,111 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cancelled — Subscription Trap</title>
+    <title>Ending — Subscription Trap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../css/styles.css" />
   </head>
-  <body>
+  <body data-ending-page="true" data-disable-popups="true">
     <audio id="bg-music" data-music-src="../assets/bg-music.mp3" loop playsinline preload="auto"></audio>
-    <script>
-      try {
-        localStorage.setItem('subscriptionCancelled', '1');
-      } catch (e) {}
-    </script>
-    <main class="max-w-5xl mx-auto px-6 py-20">
-      <div class="win-window">
-        <div class="win-title-bar">Membership Cancelled</div>
-        <div class="p-12 bg-white text-center">
-          <h1 class="text-3xl font-pixel">You're all set</h1>
-          <p class="text-xl text-win-dark-gray mb-12 font-bold">This is a placeholder confirmation page.</p>
-          <a class="win-button" href="../../index.html">Back to homepage</a>
+    <main class="ending-page">
+      <div class="ending-clouds" aria-hidden="true">
+        <div class="ending-cloud ending-cloud--sm" style="top: 10%; left: 8%"></div>
+        <div class="ending-cloud ending-cloud--md" style="top: 7%; left: 30%"></div>
+        <div class="ending-cloud ending-cloud--sm" style="top: 14%; left: 58%"></div>
+        <div class="ending-cloud ending-cloud--lg" style="top: 9%; left: 76%"></div>
+        <div class="ending-cloud ending-cloud--md" style="top: 28%; left: 12%"></div>
+        <div class="ending-cloud ending-cloud--lg" style="top: 34%; left: 44%"></div>
+        <div class="ending-cloud ending-cloud--md" style="top: 27%; left: 74%"></div>
+      </div>
+      <div class="ending-clouds ending-clouds--far" aria-hidden="true">
+        <div class="ending-cloud ending-cloud--sm" style="top: 18%; left: 20%"></div>
+        <div class="ending-cloud ending-cloud--md" style="top: 22%; left: 52%"></div>
+        <div class="ending-cloud ending-cloud--sm" style="top: 42%; left: 30%"></div>
+        <div class="ending-cloud ending-cloud--lg" style="top: 45%; left: 66%"></div>
+      </div>
+
+      <div class="ending-marquee ending-marquee--top" aria-hidden="true">
+        <div class="ending-marquee__track">
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+        </div>
+        <div class="ending-marquee__track ending-marquee__track--clone">
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
         </div>
       </div>
+
+      <section class="ending-wrap">
+        <div class="ending-window win-window">
+          <div class="win-title-bar">
+            <span>SUCCESS.EXE</span>
+            <span>×</span>
+          </div>
+          <div class="ending-body" data-ending-stage="1">
+            <h1 class="ending-title font-pixel">FREEDOM!</h1>
+            <p class="ending-subtitle font-pixel">CONGRATULATIONS!</p>
+            <p class="ending-copy">YOUR SUBSCRIPTION HAS BEEN SUCCESSFULLY CANCELLED.</p>
+            <p class="ending-note">
+              "You've escaped the trap... for now.<br />
+              We'll miss your monthly contributions to our corporate overlords."
+            </p>
+            <button type="button" class="ending-btn" data-ending-continue-1>CONTINUE</button>
+          </div>
+
+          <div class="ending-body is-hidden" data-ending-stage="2">
+            <h2 class="ending-subtitle font-pixel">LEVEL COMPLETE</h2>
+            <p class="ending-copy ending-copy--bigger" data-ending-time-text>You cleared this level in 0s.</p>
+            <p class="ending-copy">You spotted the dark patterns and made it out.</p>
+            <button type="button" class="ending-btn" data-ending-continue-2>CONTINUE</button>
+          </div>
+
+          <div class="ending-body is-hidden" data-ending-stage="3">
+            <h2 class="ending-subtitle font-pixel">QUICK SURVEY</h2>
+            <p class="ending-copy ending-copy--left">Which dark pattern annoyed you the most?</p>
+            <form class="ending-survey" data-ending-survey-form>
+              <label><input type="radio" name="ending-annoy" value="Hidden cancellation path" /> Hidden cancellation path</label>
+              <label><input type="radio" name="ending-annoy" value="Confirm shaming" /> Confirm shaming</label>
+              <label><input type="radio" name="ending-annoy" value="Misleading buttons" /> Misleading buttons</label>
+              <label><input type="radio" name="ending-annoy" value="Fake customer support" /> Fake customer support</label>
+            </form>
+            <p class="ending-hint" data-ending-survey-hint></p>
+            <button type="button" class="ending-btn" data-ending-submit>SUBMIT</button>
+          </div>
+
+          <div class="ending-body is-hidden" data-ending-stage="4">
+            <h2 class="ending-subtitle font-pixel">SUBMITTED</h2>
+            <p class="ending-copy">Thanks for your feedback!</p>
+            <p class="ending-copy" data-ending-survey-done>Submitted successfully.</p>
+            <p class="ending-copy">Go back to the homepage to view live results.</p>
+            <button type="button" class="ending-btn" data-ending-view-results>VIEW RESULTS</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="ending-marquee ending-marquee--bottom" aria-hidden="true">
+        <div class="ending-marquee__track">
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+        </div>
+        <div class="ending-marquee__track ending-marquee__track--clone">
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+          <span>GOODBYE • UNSUBSCRIBED • FREE AT LAST • NO MORE CHARGES • </span>
+        </div>
+      </div>
+
     </main>
     <script src="../main.js"></script>
   </body>

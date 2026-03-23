@@ -172,3 +172,142 @@ if (bugForm) {
     }, 1000);
   });
 }
+
+// ── 11. LIVE RESULTS (ENDING SURVEY) ─────────────
+const ENDING_SURVEY_KEY = 'trapEndingSurveyResponses';
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyCp40xxSnJ8wVpdnWCgvEG2zLS4FnmeTRQ',
+  authDomain: 'cct383-cd083.firebaseapp.com',
+  projectId: 'cct383-cd083',
+  storageBucket: 'cct383-cd083.firebasestorage.app',
+  messagingSenderId: '178903299455',
+  appId: '1:178903299455:web:34c4d47da7b3f2044d564a',
+  measurementId: 'G-NS2M2VWS1K',
+};
+const FIREBASE_TOTALS_COLLECTION = 'surveyTotals';
+const FIREBASE_TOTALS_DOC = 'main';
+const RESULTS_OPTIONS = [
+  'Hidden cancellation path',
+  'Confirm shaming',
+  'Misleading buttons',
+  'Fake customer support',
+];
+const RESULT_FIELD_MAP = {
+  'Hidden cancellation path': 'hiddenPath',
+  'Confirm shaming': 'confirmShaming',
+  'Misleading buttons': 'misleadingButtons',
+  'Fake customer support': 'fakeSupport',
+};
+let firebaseResultsApiPromise = null;
+
+function readEndingSurveyRows() {
+  try {
+    const raw = localStorage.getItem(ENDING_SURVEY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function getFirebaseResultsApi() {
+  if (firebaseResultsApiPromise) return firebaseResultsApiPromise;
+  firebaseResultsApiPromise = (async () => {
+    const [{ initializeApp }, { getFirestore, doc, getDoc }] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'),
+    ]);
+    const app = initializeApp(FIREBASE_CONFIG, 'cct383-marketing-results');
+    const db = getFirestore(app);
+    return { getDoc, totalsRef: doc(db, FIREBASE_TOTALS_COLLECTION, FIREBASE_TOTALS_DOC) };
+  })().catch((err) => {
+    firebaseResultsApiPromise = null;
+    throw err;
+  });
+  return firebaseResultsApiPromise;
+}
+
+async function readFirebaseSurveyRows() {
+  try {
+    const { getDoc, totalsRef } = await getFirebaseResultsApi();
+    const snap = await getDoc(totalsRef);
+    if (!snap.exists()) return null;
+    const data = snap.data();
+    return RESULTS_OPTIONS.map((label) => {
+      const field = RESULT_FIELD_MAP[label];
+      const count = Number(data?.[field]);
+      const safe = Number.isFinite(count) && count > 0 ? Math.floor(count) : 0;
+      return { choice: label, count: safe };
+    });
+  } catch {
+    return null;
+  }
+}
+
+function renderResultsChartFromRows(rows) {
+  const chartHost = document.querySelector('[data-results-chart]');
+  const totalEl = document.querySelector('[data-results-total]');
+  if (!chartHost || !totalEl) return;
+  const counts = new Map(RESULTS_OPTIONS.map((label) => [label, 0]));
+  rows.forEach((row) => {
+    const key = row && typeof row.choice === 'string' ? row.choice : '';
+    if (!counts.has(key)) return;
+    const directCount = Number(row?.count);
+    if (Number.isFinite(directCount)) {
+      counts.set(key, Math.max(0, Math.floor(directCount)));
+      return;
+    }
+    counts.set(key, counts.get(key) + 1);
+  });
+
+  const total = Array.from(counts.values()).reduce((sum, n) => sum + n, 0);
+  totalEl.textContent = `Total responses: ${total}`;
+
+  if (total === 0) {
+    chartHost.innerHTML = '<p class="results-empty">No survey responses yet. Play the game and submit one!</p>';
+    return;
+  }
+
+  chartHost.innerHTML = '';
+  RESULTS_OPTIONS.forEach((label) => {
+    const count = counts.get(label) || 0;
+    const pct = Math.round((count / total) * 100);
+
+    const row = document.createElement('div');
+    row.className = 'results-row';
+
+    const labelEl = document.createElement('p');
+    labelEl.className = 'results-row__label';
+    labelEl.textContent = label;
+
+    const barWrap = document.createElement('div');
+    barWrap.className = 'results-row__bar-wrap';
+
+    const bar = document.createElement('div');
+    bar.className = 'results-row__bar';
+    bar.style.width = `${pct}%`;
+
+    const meta = document.createElement('p');
+    meta.className = 'results-row__meta';
+    meta.textContent = `${count} vote${count === 1 ? '' : 's'} (${pct}%)`;
+
+    barWrap.appendChild(bar);
+    row.appendChild(labelEl);
+    row.appendChild(barWrap);
+    row.appendChild(meta);
+    chartHost.appendChild(row);
+  });
+}
+
+async function renderResultsChart() {
+  const remoteRows = await readFirebaseSurveyRows();
+  const rows = Array.isArray(remoteRows) ? remoteRows : readEndingSurveyRows();
+  renderResultsChartFromRows(rows);
+}
+
+renderResultsChart();
+window.addEventListener('storage', (e) => {
+  if (e.key === ENDING_SURVEY_KEY) renderResultsChart();
+});
+window.setInterval(renderResultsChart, 4000);
