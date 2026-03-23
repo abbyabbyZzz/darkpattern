@@ -364,6 +364,7 @@
   const STORAGE_KEYS = {
     subscriptionStart: 'subscriptionTrialStartAt',
     subscriptionCancelled: 'subscriptionCancelled',
+    warningShownThisLoop: 'subscriptionWarningShownThisLoop',
   };
   /** sessionStorage: NYANhub visits this “run” (reset when Start → Claim → home). */
   const NYAN_HUB_VISIT_KEY = 'trapNyanHubVisitsThisGame';
@@ -422,6 +423,30 @@
     }
   };
 
+  const markWarningShownThisLoop = () => {
+    try {
+      sessionStorage.setItem(STORAGE_KEYS.warningShownThisLoop, '1');
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const clearWarningShownThisLoop = () => {
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.warningShownThisLoop);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const wasWarningShownThisLoop = () => {
+    try {
+      return sessionStorage.getItem(STORAGE_KEYS.warningShownThisLoop) === '1';
+    } catch {
+      return false;
+    }
+  };
+
   /**
    * Remaining trial ms: `null` = 24h countdown has not started yet (close the warning first).
    * `0` = subscription cancelled (in-game) or trial time fully elapsed.
@@ -471,6 +496,7 @@
 
   const showWarningOverlay = () => {
     if (!warningOverlay) return;
+    markWarningShownThisLoop();
     warningOverlay.classList.remove('is-hidden');
     warningOverlay.setAttribute('aria-hidden', 'false');
   };
@@ -505,6 +531,7 @@
   const scheduleHomeWarning = () => {
     clearWarningTimers();
     if (!warningOverlay || !isHomePage() || isPopupDisabledPage()) return;
+    if (wasWarningShownThisLoop()) return;
     if (getTrialMsLeft() !== null) return;
     homeWarningTimeoutId = window.setTimeout(() => {
       homeWarningTimeoutId = null;
@@ -529,6 +556,16 @@
   // ----- Start screen: sound choice + free-trial modal -----
   const initStartScreen = () => {
     if (!isStartPage()) return;
+    clearWarningTimers();
+    clearClaimBenefitsAt();
+    clearWarningShownThisLoop();
+    clearSubscriptionCancelled();
+    try {
+      localStorage.removeItem(STORAGE_KEYS.subscriptionStart);
+    } catch {
+      /* ignore */
+    }
+
     const startBtn = qs('[data-start-game]');
     const introOverlay = qs('[data-intro-offer-overlay]');
     const claimBtn = qs('[data-intro-claim]');
@@ -578,7 +615,6 @@
     claimBtn.addEventListener('click', () => {
       try {
         localStorage.setItem(PROMO_EMAIL_OPT_IN_KEY, emailCb?.checked ? '1' : '0');
-        localStorage.setItem(CLAIM_BENEFITS_AT_KEY, String(Date.now()));
         clearSubscriptionCancelled();
       } catch {
         /* ignore */
