@@ -1,5 +1,5 @@
 # Copy Cursor chat-upload DVD cover PNGs into assets as nyan-cover-01.png … 09.png
-# Run from project root:  powershell -ExecutionPolicy Bypass -File .\copy-nyan-covers.ps1
+# Run from the game folder:  cd game; powershell -ExecutionPolicy Bypass -File .\copy-nyan-covers.ps1
 
 $ErrorActionPreference = "Stop"
 $destDir = Join-Path $PSScriptRoot "assets"

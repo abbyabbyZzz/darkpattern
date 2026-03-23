@@ -1,131 +1,356 @@
-<!doctype html>
-<html lang="en" class="start-page-html">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Subscription Trap — Start</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body data-start-page="true">
-    <audio id="bg-music" data-music-src="assets/bg-music.mp3" loop playsinline preload="auto"></audio>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Trap — Escape the Dark Pattern</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-    <main class="start-page">
-      <div class="start-page__inner win-window">
-        <div class="win-title-bar bg-win-blue start-page__title-bar">
-          <span class="text-10 font-pixel">Subscription Trap</span>
-        </div>
-        <div class="start-page__body p-6 bg-win-beige">
-          <h1 class="start-page__title font-pixel text-center uppercase tracking-tighter mb-8">
-            Cancel Me if You Can
-          </h1>
+  <div id="progress-bar"></div>
 
-          <div class="start-page__intro text-lg leading-relaxed mb-8 space-y-4">
-            <p>Your mission is simple: cancel your subscription.</p>
-            <p>But the path won’t be.</p>
-            <p>
-              Explore different settings, avoid misleading options, and find the hidden way out before time runs
-              out.
-            </p>
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#home" class="nav-logo">
+      <span class="bracket">[</span>CCT383<span class="bracket">]</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#home"     data-nav>Home</a></li>
+      <li><a href="#play"     data-nav>Play</a></li>
+      <li><a href="#patterns" data-nav>Dark Patterns</a></li>
+      <li><a href="#team"     data-nav>Team</a></li>
+      <li><a href="#share"    data-nav>Share</a></li>
+      <li><a href="#report"   data-nav>Report Bug</a></li>
+    </ul>
+  </nav>
+
+  <!-- ░░ HERO ░░ -->
+  <section class="section hero" id="home">
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud c-sm" style="top:11%; left:14%; animation-duration:18s;"></div>
+      <div class="cloud c-md" style="top:7%;  left:33%; animation-duration:24s; animation-delay:-4s;"></div>
+      <div class="cloud c-sm" style="top:16%; left:62%; animation-duration:20s; animation-delay:-8s;"></div>
+      <div class="cloud c-lg" style="top:20%; left:74%; animation-duration:28s; animation-delay:-12s;"></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="px-eyebrow reveal">CCT383 &middot; U of T Mississauga</p>
+      <h1 class="hero-title reveal">SUBSCRIPTION<br><span class="red-text">TRAP.</span></h1>
+      <p class="hero-sub reveal">&gt; Escape the Dark Pattern_</p>
+      <p class="hero-desc reveal">
+        An interactive game that teaches players how subscription platforms use
+        dark patterns to make cancellation confusing, frustrating — and sometimes impossible.
+      </p>
+      <div class="hero-btns reveal">
+        <a href="game/index.html" class="px-btn px-btn-fill">&#9658; PLAY NOW</a>
+        <a href="#patterns" class="px-btn px-btn-outline">? LEARN MORE</a>
+      </div>
+    </div>
+
+    <!-- Files row, mimicking the design mockup -->
+    <div class="files-row reveal" aria-hidden="true">
+      <span class="files-label">Files</span>
+      <div class="folder-row">
+        <div class="px-folder"></div>
+        <div class="px-folder"></div>
+        <div class="px-folder"></div>
+        <div class="px-folder"></div>
+      </div>
+    </div>
+
+    <div class="streetscape">
+      <img src="bg.png" alt="Pixel art street scene" />
+    </div>
+  </section>
+
+  <!-- ░░ PLAY ░░ -->
+  <section class="section section-alt" id="play">
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud c-sm" style="top:8%; left:5%;  animation-duration:22s;"></div>
+      <div class="cloud c-md" style="top:5%; left:60%; animation-duration:26s; animation-delay:-6s;"></div>
+    </div>
+    <div class="container">
+      <p class="px-label reveal">// THE GAME</p>
+      <h2 class="section-title reveal">ESCAPE THE<br><span class="red-text">TRAP.</span></h2>
+      <p class="section-desc reveal">
+        Navigate a deliberately manipulative interface — like the ones millions of people use every day.
+        Find the cancel button, survive the guilt trips, expose the tricks.
+      </p>
+
+      <div class="px-card play-card reveal">
+        <div class="play-row">
+          <div class="px-screen">
+            <div class="scanlines"></div>
+            <p class="screen-txt">LEVEL 01<br>READY?</p>
+            <span class="blink">&#9646;</span>
           </div>
-
-          <fieldset class="start-page__sound border-0 p-0 m-0 mb-8">
-            <legend class="font-pixel text-10 uppercase mb-4 tracking-widest text-center start-page__legend">Enter the game</legend>
-            <div class="flex flex-col gap-3 start-page__sound-row">
-              <label class="start-page__radio-label">
-                <input type="radio" name="start-sound" value="on" class="start-page__radio" checked />
-                <span>With sound</span>
-              </label>
-              <label class="start-page__radio-label">
-                <input type="radio" name="start-sound" value="off" class="start-page__radio" />
-                <span>Without sound</span>
-              </label>
+          <div class="play-info">
+            <p class="play-name">Subscription Trap</p>
+            <p class="play-meta">~5 min &nbsp;&middot;&nbsp; No account &nbsp;&middot;&nbsp; Mobile OK</p>
+            <div class="tag-row">
+              <span class="px-tag">Interactive</span>
+              <span class="px-tag">Educational</span>
+              <span class="px-tag">UX Ethics</span>
             </div>
-          </fieldset>
-
-          <div class="flex flex-col items-center gap-4 start-page__cta">
-            <button type="button" class="win-button start-page__start-btn bg-win-green text-white border-win-black hover-bg-white hover-text-win-black" data-start-game>
-              Start game
-            </button>
-            <p class="text-sm text-win-dark-gray text-center start-page__sound-note">Sound applies across the whole site.</p>
           </div>
+          <a href="game/index.html" class="px-btn px-btn-fill play-cta">&#9658; PLAY</a>
         </div>
-      </div>
-    </main>
-
-    <!-- Free trial offer (after Start game) -->
-    <div
-      class="fixed inset-0 z-55 flex items-center justify-center bg-black-50 p-4 is-hidden"
-      data-intro-offer-overlay
-      aria-hidden="true"
-    >
-      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="intro-offer-title">
-        <div class="win-title-bar bg-win-green text-win-black">
-          <span id="intro-offer-title" class="text-10 font-pixel">Special offer</span>
-        </div>
-        <div class="p-6 flex flex-col gap-6 bg-white">
-          <p class="text-win-black intro-offer__lead leading-relaxed text-center">
-            Congratulations — you’ve unlocked a <span class="intro-offer__highlight">free trial membership</span> to our
-            product. Claim your benefits to enter the experience.
-          </p>
-          <button
-            type="button"
-            class="win-button w-full text-12 px-8 bg-win-blue text-white border-win-blue"
-            data-intro-claim
-          >
-            Claim benefits
-          </button>
-          <label class="flex items-start gap-3 intro-offer__email-label text-win-dark-gray cursor-pointer leading-snug">
-            <input type="checkbox" class="start-page__checkbox mt-1" data-intro-email checked />
-            <span>Email me promotions, tips, and “exclusive” offers.</span>
-          </label>
+        <div class="card-footer-bar">
+          <span>&#9733; FREE</span>
+          <span>&#9733; NO LOGIN REQUIRED</span>
+          <span>&#9733; WORKS ON ANY DEVICE</span>
         </div>
       </div>
     </div>
+    <div class="streetscape streetscape-sm">
+      <img src="bg.png" alt="" aria-hidden="true" />
+    </div>
+  </section>
 
-    <!-- System warning: Claim benefits → 10s later; 24h countdown starts when player closes (OK / X / backdrop / Esc) -->
-    <div class="fixed inset-0 z-60 flex items-center justify-center bg-black-50 p-4 is-hidden" data-warning-overlay aria-hidden="true">
-      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-label="System Warning">
-        <div class="win-title-bar">
-          <div class="flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-win-red">
-              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-              <line x1="12" y1="9" x2="12" y2="13"></line>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            <span class="text-10 font-pixel">System Warning</span>
-          </div>
-          <button
-            class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red"
-            type="button"
-            data-warning-close
-            aria-label="Close warning"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+  <!-- ░░ DARK PATTERNS ░░ -->
+  <section class="section" id="patterns">
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud c-md" style="top:5%; left:20%; animation-duration:21s; animation-delay:-3s;"></div>
+      <div class="cloud c-sm" style="top:9%; left:78%; animation-duration:17s;"></div>
+    </div>
+    <div class="container">
+      <p class="px-label reveal">// WHAT ARE DARK PATTERNS?</p>
+      <h2 class="section-title reveal">DESIGN THAT<br><span class="red-text">TRAPS YOU.</span></h2>
+      <p class="section-desc reveal">
+        Dark patterns are interface tricks — deliberate design choices that push users
+        toward actions they didn't intend. Named by UX researcher Harry Brignull in 2010, they're everywhere.
+      </p>
+
+      <div class="patterns-grid">
+        <div class="px-notecard reveal">
+          <span class="nc-num">01</span>
+          <span class="nc-icon">&#128274;</span>
+          <h3 class="nc-title">ROACH MOTEL</h3>
+          <p class="nc-body">Easy to subscribe, nearly impossible to cancel. Settings buried five menus deep. Phone-only cancellation. Loops that never end.</p>
+          <span class="nc-badge">IN OUR GAME</span>
         </div>
-        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
-          <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
-            WARNING: Free trial will ends in 24hrs.
-          </div>
-          <div class="text-win-black text-sm font-bold">
-            Your account will be automatically charged for the Annual Plan upon expiration.
-          </div>
-          <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
-            OK
-          </button>
+        <div class="px-notecard reveal">
+          <span class="nc-num">02</span>
+          <span class="nc-icon">&#128148;</span>
+          <h3 class="nc-title">CONFIRMSHAMING</h3>
+          <p class="nc-body">Cancel buttons labelled "No thanks, I hate saving money." Guilt-trip copy designed to make you second-guess a perfectly reasonable choice.</p>
+          <span class="nc-badge">IN OUR GAME</span>
+        </div>
+        <div class="px-notecard reveal">
+          <span class="nc-num">03</span>
+          <span class="nc-icon">&#129302;</span>
+          <h3 class="nc-title">FAKE LIVE CHAT</h3>
+          <p class="nc-body">A "support agent" that's actually a bot — stalling, deflecting, wearing you down until you give up on cancelling entirely.</p>
+          <span class="nc-badge">IN OUR GAME</span>
+        </div>
+        <div class="px-notecard reveal">
+          <span class="nc-num">04</span>
+          <span class="nc-icon">&#9201;</span>
+          <h3 class="nc-title">FALSE URGENCY</h3>
+          <p class="nc-body">Countdown timers and "limited time" banners on every visit — manufacturing pressure for a decision that was never urgent at all.</p>
+          <span class="nc-badge">IN OUR GAME</span>
         </div>
       </div>
-    </div>
 
-    <script src="./main.js"></script>
-  </body>
+      <blockquote class="px-quote reveal">
+        <span class="quote-glyph">&#8220;</span>
+        <p>Dark patterns are instances where designers use their knowledge of human behaviour and psychology to implement deceptive functionality.</p>
+        <cite>&#8212; Harry Brignull, darkpatterns.org</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ░░ TEAM ░░ -->
+  <section class="section section-alt" id="team">
+    <div class="container">
+      <p class="px-label reveal">// WHO MADE THIS</p>
+      <h2 class="section-title reveal">MEET THE<br><span class="red-text">TEAM.</span></h2>
+      <p class="section-desc reveal">
+        Built by four CCT383 students at the University of Toronto Mississauga
+        as a project in ethical interaction design.
+      </p>
+
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <div class="sprite sprite-a">A</div>
+          <p class="tm-name">MEMBER A</p>
+          <p class="tm-role">Game Design &amp; UX Research</p>
+          <div class="hp-wrap"><div class="hp-fill" style="width:90%"></div></div>
+        </div>
+        <div class="team-card reveal">
+          <div class="sprite sprite-b">B</div>
+          <p class="tm-name">MEMBER B</p>
+          <p class="tm-role">Frontend Development</p>
+          <div class="hp-wrap"><div class="hp-fill" style="width:85%"></div></div>
+        </div>
+        <div class="team-card reveal">
+          <div class="sprite sprite-c">C</div>
+          <p class="tm-name">MEMBER C</p>
+          <p class="tm-role">Narrative &amp; Content</p>
+          <div class="hp-wrap"><div class="hp-fill" style="width:88%"></div></div>
+        </div>
+        <div class="team-card reveal">
+          <div class="sprite sprite-d">D</div>
+          <p class="tm-name">MEMBER D</p>
+          <p class="tm-role">Visual Design</p>
+          <div class="hp-wrap"><div class="hp-fill" style="width:92%"></div></div>
+        </div>
+      </div>
+
+      <div class="px-card team-note reveal">
+        <p>CCT383: Interaction Design &nbsp;&middot;&nbsp; Fall 2024<br>
+        Institute of Communication, Culture, Information &amp; Technology &middot; UTM<br>
+        Prof. [Professor Name]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ SHARE ░░ -->
+  <section class="section" id="share">
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud c-lg" style="top:8%; left:8%;  animation-duration:30s;"></div>
+      <div class="cloud c-sm" style="top:5%; left:82%; animation-duration:19s; animation-delay:-7s;"></div>
+    </div>
+    <div class="container container-narrow">
+      <p class="px-label reveal">// SPREAD THE WORD</p>
+      <h2 class="section-title reveal">SHARE THE<br><span class="red-text">GAME.</span></h2>
+      <p class="section-desc reveal">
+        Help others recognise dark patterns in everyday apps.
+        Every share makes the web a little less manipulative.
+      </p>
+
+      <div class="share-grid reveal">
+        <button class="px-share-btn" onclick="shareVia('instagram')">
+          <span class="sh-icon">&#128248;</span><span>Instagram</span>
+        </button>
+        <button class="px-share-btn" onclick="shareVia('discord')">
+          <span class="sh-icon">&#128172;</span><span>Discord</span>
+        </button>
+        <button class="px-share-btn" onclick="shareVia('whatsapp')">
+          <span class="sh-icon">&#128241;</span><span>WhatsApp</span>
+        </button>
+        <button class="px-share-btn" onclick="shareVia('email')">
+          <span class="sh-icon">&#9993;</span><span>Email</span>
+        </button>
+      </div>
+
+      <div class="copy-row reveal">
+        <input type="text" id="share-url" class="pixel-input copy-input" value="" readonly />
+        <button class="px-btn px-btn-outline" onclick="copyLink()">COPY</button>
+      </div>
+
+      <div class="qr-wrap reveal">
+        <div class="px-qr">
+          <svg viewBox="0 0 80 80" width="96" height="96" xmlns="http://www.w3.org/2000/svg" fill="var(--purple-dark)">
+            <rect x="0" y="0" width="24" height="24"/><rect x="4" y="4" width="16" height="16" fill="var(--cream)"/>
+            <rect x="8" y="8" width="8" height="8"/>
+            <rect x="56" y="0" width="24" height="24"/><rect x="60" y="4" width="16" height="16" fill="var(--cream)"/>
+            <rect x="64" y="8" width="8" height="8"/>
+            <rect x="0" y="56" width="24" height="24"/><rect x="4" y="60" width="16" height="16" fill="var(--cream)"/>
+            <rect x="8" y="64" width="8" height="8"/>
+            <rect x="28" y="0" width="8" height="8"/><rect x="40" y="0" width="8" height="8"/>
+            <rect x="28" y="16" width="8" height="8"/>
+            <rect x="0" y="28" width="8" height="8"/><rect x="16" y="28" width="8" height="8"/>
+            <rect x="32" y="28" width="16" height="8"/><rect x="56" y="28" width="8" height="8"/>
+            <rect x="32" y="40" width="8" height="8"/><rect x="48" y="40" width="8" height="8"/>
+            <rect x="64" y="40" width="16" height="8"/>
+            <rect x="32" y="56" width="8" height="8"/><rect x="48" y="56" width="8" height="16"/>
+            <rect x="64" y="56" width="8" height="8"/><rect x="32" y="64" width="8" height="16"/>
+            <rect x="64" y="64" width="16" height="16"/>
+          </svg>
+        </div>
+        <p class="qr-lbl">SCAN TO SHARE</p>
+      </div>
+    </div>
+    <div class="streetscape streetscape-sm">
+      <img src="bg.png" alt="" aria-hidden="true" />
+    </div>
+  </section>
+
+  <!-- ░░ REPORT BUG ░░ -->
+  <section class="section section-alt" id="report">
+    <div class="container container-narrow">
+      <p class="px-label reveal" style="color:var(--amber);">// FOUND SOMETHING BROKEN?</p>
+      <h2 class="section-title reveal">REPORT<br><span class="red-text">A BUG.</span></h2>
+      <p class="section-desc reveal">
+        Found a bug? Tell us the page, what happened, and attach a screenshot.
+        We read every report.
+      </p>
+
+      <form class="px-form reveal" id="bug-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bug-name">YOUR NAME</label>
+            <input type="text" id="bug-name" placeholder="Alex K." class="pixel-input" />
+          </div>
+          <div class="form-group">
+            <label for="bug-email">EMAIL (OPTIONAL)</label>
+            <input type="email" id="bug-email" placeholder="you@email.com" class="pixel-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bug-page">WHICH PAGE?</label>
+          <select id="bug-page" class="pixel-input">
+            <option value="">Select a page...</option>
+            <option>Home</option><option>Play (Game)</option>
+            <option>Dark Patterns</option><option>Meet the Team</option>
+            <option>Share</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bug-desc">WHAT HAPPENED?</label>
+          <textarea id="bug-desc" rows="4" placeholder="What you expected vs. what actually happened..." class="pixel-input"></textarea>
+        </div>
+        <div class="form-group">
+          <label>SCREENSHOT (OPTIONAL)</label>
+          <div class="px-filedrop">
+            <input type="file" id="bug-file" accept="image/*" />
+            <span class="fdrop-label">[ DROP IMAGE OR BROWSE ]</span>
+            <span class="fdrop-name" id="file-name"></span>
+          </div>
+        </div>
+        <button type="submit" class="px-btn px-btn-fill">SUBMIT REPORT &#9658;</button>
+        <p class="form-note">No account needed. We'll reply to your email if provided.</p>
+      </form>
+
+      <div class="form-success" id="form-success" hidden>
+        <div class="success-star">&#9733;</div>
+        <p class="success-title">REPORT RECEIVED!</p>
+        <p class="success-body">Thanks for helping us improve. We'll look into it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="brick-floor" aria-hidden="true"></div>
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        <span class="bracket">[</span>CCT383<span class="bracket">]</span>
+      </div>
+      <p class="footer-copy">
+        Built by four CCT383 students &middot; University of Toronto Mississauga &middot; 2024<br>
+        This project is for educational purposes only.
+      </p>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="game/index.html">PLAY</a>
+        <a href="#patterns">PATTERNS</a>
+        <a href="#team">TEAM</a>
+        <a href="#report">BUGS</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
 </html>

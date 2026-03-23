@@ -4,9 +4,10 @@
     "Courier New", monospace;
   --font-pixel: "Press Start 2P", cursive;
 
+  /* Original Win palette; only the old blue accent is swapped for purple */
   --win-green: #76c442;
   --win-beige: #fff5e6;
-  --win-blue: #4a90e2;
+  --win-blue: #7569d8; /* was #4a90e2 — same role, purple instead of blue */
   --win-pink: #ffb7c5;
   --win-red: #ff4d4d;
   --win-black: #2d2d2d;
@@ -388,6 +389,20 @@ body[data-start-page] {
   padding: 16px 28px !important;
   min-width: min(100%, 280px);
   box-shadow: var(--shadow-hard);
+}
+/* Return to marketing homepage */
+.start-page__exit-btn {
+  font-size: clamp(11px, 2.5vw, 14px) !important;
+  padding: 12px 24px !important;
+  min-width: min(100%, 280px);
+  box-shadow: var(--shadow-hard);
+  text-decoration: none;
+  display: inline-block;
+  box-sizing: border-box;
+}
+.start-page__exit-btn:hover {
+  background: var(--win-lavender) !important;
+  color: var(--win-black) !important;
 }
 .start-page__sound-note {
   font-weight: 500;
@@ -1419,8 +1434,8 @@ body.is-screen-shake {
   width: 100%;
   padding: 10px 10px 12px;
   cursor: pointer;
-  background: #fff5e6;
-  box-shadow: 6px 6px 0 #000, 0 0 40px rgba(255, 45, 149, 0.35);
+  background: var(--win-beige);
+  box-shadow: 6px 6px 0 var(--win-black), 0 0 40px rgba(117, 105, 216, 0.35);
 }
 
 .nyan-ad-popup__img {

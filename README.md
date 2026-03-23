@@ -8,23 +8,22 @@ Pure static version (**HTML + CSS + vanilla JavaScript**), no Node.js / Vite / R
 
 ## Run Locally
 
-- **Option 1 (quickest):** double-click `index.html`
-- **Option 2 (recommended):** serve this folder with any static server (for example, VSCode Live Server)
+- **Option 1 (quickest):** open the project folder and double-click **`index.html`** (marketing landing page).
+- **Option 2 (recommended):** serve the **project root** with any static server (e.g. VS Code Live Server) so paths like `game/index.html` resolve correctly.
 
 ## Project Structure
 
-- `index.html` — **start screen** (mission intro, sound choice, Start game → trial offer modal)
-- `home/index.html` — in-world “shop” homepage (Home / About / Pricing carousel)
-- `css/styles.css` — styling (Win95 / pixel-inspired visual style)
-- `main.js` — interactions (carousel, trial warning **10s after Claim benefits**; **24h countdown starts / resets each time the player closes the warning** (OK / X / backdrop / Esc), modals, expandable menus, background music)
-- `assets/bg-music.mp3` — looping background music (place your MP3 here if missing)
-- `assets/sfx-shake.mp3` — wrong-option screen shake sound (from `cncl03.mp3`)
-- `assets/email-promo-notify.mp3` — spam-mail toast SFX (from `musmus_btn_set/btn06.mp3`)
-- `assets/email-promo-icon.svg` — mail icon for promo toasts (from `email.svg`)
-- `my-page/` — account page
-- `subscription/` — subscription countdown
-- `manage-subscription/` — plan management
-- `cancel-plan/` — cancel flow + modals
-- `cancelled/` — confirmation placeholder
-- `customer-support/` — FAQ + contact form
-- `feedback/` — feedback placeholder
+- **`index.html`** — marketing / course landing (383Structure-style: VT323 body, purple palette). **Play** → `game/index.html`.
+- **`style.css`**, **`main.js`** — landing page only.
+- **`bg.png`** — pixel street banner used in `.streetscape` (keep next to `index.html`).
+- **`game/`** — full interactive experience:
+  - `game/index.html` — start screen (mission intro, sound choice, Start → trial offer modal)
+  - `game/home/index.html` — in-world shop homepage
+  - `game/css/styles.css` — Win95 / pixel-inspired UI
+  - `game/main.js` — carousel, modals, countdown, navigation (BAD END returns to root `../index.html`)
+  - `game/assets/` — images, audio, icons
+  - `game/my-page/`, `game/subscription/`, `game/manage-subscription/`, `game/cancel-plan/`, `game/cancelled/`, `game/customer-support/`, `game/feedback/`, `game/nyan-hub/`, etc.
+
+### Scripts
+
+- `game/copy-nyan-covers.ps1` — run **from the `game/` directory** (see comment at top of file).

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" class="start-page-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Trap — Start</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body data-start-page="true">
+    <audio id="bg-music" data-music-src="assets/bg-music.mp3" loop playsinline preload="auto"></audio>
+
+    <main class="start-page">
+      <div class="start-page__inner win-window">
+        <div class="win-title-bar bg-win-blue start-page__title-bar">
+          <span class="text-10 font-pixel">Subscription Trap</span>
+        </div>
+        <div class="start-page__body p-6 bg-win-beige">
+          <h1 class="start-page__title font-pixel text-center uppercase tracking-tighter mb-8">
+            Cancel Me if You Can
+          </h1>
+
+          <div class="start-page__intro text-lg leading-relaxed mb-8 space-y-4">
+            <p>Your mission is simple: cancel your subscription.</p>
+            <p>But the path won’t be.</p>
+            <p>
+              Explore different settings, avoid misleading options, and find the hidden way out before time runs
+              out.
+            </p>
+          </div>
+
+          <fieldset class="start-page__sound border-0 p-0 m-0 mb-8">
+            <legend class="font-pixel text-10 uppercase mb-4 tracking-widest text-center start-page__legend">Enter the game</legend>
+            <div class="flex flex-col gap-3 start-page__sound-row">
+              <label class="start-page__radio-label">
+                <input type="radio" name="start-sound" value="on" class="start-page__radio" checked />
+                <span>With sound</span>
+              </label>
+              <label class="start-page__radio-label">
+                <input type="radio" name="start-sound" value="off" class="start-page__radio" />
+                <span>Without sound</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="flex flex-col items-center gap-4 start-page__cta">
+            <button type="button" class="win-button start-page__start-btn bg-win-green text-white border-win-black hover-bg-white hover-text-win-black" data-start-game>
+              Start game
+            </button>
+            <a href="../index.html" class="win-button start-page__exit-btn bg-white text-win-black border-win-black">Exit</a>
+            <p class="text-sm text-win-dark-gray text-center start-page__sound-note">Sound applies across the whole site.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Free trial offer (after Start game) -->
+    <div
+      class="fixed inset-0 z-55 flex items-center justify-center bg-black-50 p-4 is-hidden"
+      data-intro-offer-overlay
+      aria-hidden="true"
+    >
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="intro-offer-title">
+        <div class="win-title-bar bg-win-green text-win-black">
+          <span id="intro-offer-title" class="text-10 font-pixel">Special offer</span>
+        </div>
+        <div class="p-6 flex flex-col gap-6 bg-white">
+          <p class="text-win-black intro-offer__lead leading-relaxed text-center">
+            Congratulations — you’ve unlocked a <span class="intro-offer__highlight">free trial membership</span> to our
+            product. Claim your benefits to enter the experience.
+          </p>
+          <button
+            type="button"
+            class="win-button w-full text-12 px-8 bg-win-blue text-white border-win-blue"
+            data-intro-claim
+          >
+            Claim benefits
+          </button>
+          <label class="flex items-start gap-3 intro-offer__email-label text-win-dark-gray cursor-pointer leading-snug">
+            <input type="checkbox" class="start-page__checkbox mt-1" data-intro-email checked />
+            <span>Email me promotions, tips, and “exclusive” offers.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- System warning: Claim benefits → 10s later; 24h countdown starts when player closes (OK / X / backdrop / Esc) -->
+    <div class="fixed inset-0 z-60 flex items-center justify-center bg-black-50 p-4 is-hidden" data-warning-overlay aria-hidden="true">
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-label="System Warning">
+        <div class="win-title-bar">
+          <div class="flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-win-red">
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span class="text-10 font-pixel">System Warning</span>
+          </div>
+          <button
+            class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red"
+            type="button"
+            data-warning-close
+            aria-label="Close warning"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
+          <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
+            WARNING: Free trial will ends in 24hrs.
+          </div>
+          <div class="text-win-black text-sm font-bold">
+            Your account will be automatically charged for the Annual Plan upon expiration.
+          </div>
+          <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./main.js"></script>
+  </body>
+</html>

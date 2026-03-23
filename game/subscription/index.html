@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Page — Subscription Trap</title>
+    <title>Subscription — Subscription Trap</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,52 +16,30 @@
     <audio id="bg-music" data-music-src="../assets/bg-music.mp3" loop playsinline preload="auto"></audio>
     <nav class="win-window sticky top-0 z-40 mb-6 bg-win-blue border-b-8 rounded-none">
       <div class="flex items-center justify-between px-6 py-4 h-24">
-        <a href="../home/#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
+        <a href="../home/index.html#home" class="text-2xl text-white leading-none font-pixel">SHOP TRAP</a>
         <div class="flex items-center gap-6" role="navigation" aria-label="Primary">
-          <a href="../home/#home" class="nav-link text-white hover-bg-white-20">Home</a>
-          <a href="../home/#about" class="nav-link text-white hover-bg-white-20">About</a>
-          <a href="../home/#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
-          <a href="./" class="nav-link text-white hover-bg-white-20">My Page</a>
+          <a href="../home/index.html#home" class="nav-link text-white hover-bg-white-20">Home</a>
+          <a href="../home/index.html#about" class="nav-link text-white hover-bg-white-20">About</a>
+          <a href="../home/index.html#pricing" class="nav-link text-white hover-bg-white-20">Pricing</a>
+          <a href="../my-page/" class="nav-link text-white hover-bg-white-20">My Page</a>
           <a href="../customer-support/" class="nav-link text-white hover-bg-white-20">Support</a>
         </div>
       </div>
     </nav>
 
     <main class="flex-grow">
-      <div class="account-page max-w-7xl mx-auto px-6">
-        <div class="account-hero">
-          <div class="account-avatar" aria-hidden="true">
-            <svg width="74" height="74" viewBox="0 0 24 24" fill="none" stroke="#f1f1f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>
+      <section class="subscription-page max-w-7xl mx-auto px-6">
+        <a href="#" class="page-back" onclick="history.back(); return false;">← Back</a>
 
-          <div class="account-hero__content">
-            <h1 class="account-username">User_4029</h1>
-            <div class="account-lines" aria-hidden="true">
-              <div class="account-line account-line--1"></div>
-              <div class="account-line account-line--2"></div>
-              <div class="account-line account-line--3"></div>
-            </div>
-          </div>
+        <p class="subscription-kicker">USER_4029, YOUR SUBSCRIPTION WILL END IN...</p>
 
-          <a href="#" class="account-edit">edit profile</a>
+        <div class="subscription-timer" data-subscription-countdown>24:00:00</div>
+
+        <div class="subscription-actions">
+          <button class="renew-button" type="button">RENEW PLAN</button>
+          <a href="../manage-subscription/" class="manage-link">manage subscription</a>
         </div>
-
-        <section class="account-settings">
-          <h2 class="account-settings__title">ACCOUNT SETTINGS</h2>
-          <div class="account-settings__rule"></div>
-          <ul class="account-settings__list">
-            <li><a href="#" class="account-option" data-account-wrong>Order History</a></li>
-            <li><a href="#" class="account-option" data-account-wrong>Account Security</a></li>
-            <li><a href="#" class="account-option" data-account-wrong>Data &amp; Privacy Settings</a></li>
-            <li><a href="#" class="account-option" data-account-wrong>Payment Settings</a></li>
-            <li><a href="#" class="account-option" data-account-wrong>Deactivate Account</a></li>
-            <li><a href="../subscription/" class="account-option">Subscription</a></li>
-          </ul>
-        </section>
-      </div>
+      </section>
     </main>
 
     <footer class="mt-12 p-12 bg-win-black text-win-beige text-center border-t-8 border-win-blue">
