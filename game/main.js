@@ -969,7 +969,7 @@
     window.setInterval(spawnEmailToast, 8000);
   };
 
-  /** Random interstitial “nyan ad” → NYANhub; tiny close; next show after random 10s–15s. Skipped on start page & nyan-hub. */
+  /** Random interstitial “nyan ad” → NYANhub; tiny close; next show after random 20s–60s. Skipped on start page & nyan-hub. */
   const initNyanAdPopups = () => {
     try {
       if (isStartPage()) return;
@@ -977,8 +977,8 @@
 
       const root = getSiteRoot();
       const nyanHubUrl = new URL('nyan-hub/index.html', root).href;
-      /** 10s–15s (inclusive) */
-      const randomPopupDelay = () => 10_000 + Math.floor(Math.random() * 5_001);
+      /** 20s–60s (inclusive) */
+      const randomPopupDelay = () => 20_000 + Math.floor(Math.random() * 40_001);
 
       let timer = null;
 
@@ -1083,14 +1083,21 @@
     }
   };
 
-  /** Same black-screen BAD END as on NYANhub (any page). */
-  const appendNyanBadEndLayer = () => {
+  /**
+   * Same black-screen BAD END as on NYANhub (any page).
+   * @param {{ subHtml?: string, titleText?: string }} [opts]
+   */
+  const appendNyanBadEndLayer = (opts = {}) => {
     if (qs('#nyan-hub-badend')) return;
     try {
       document.body.style.overflow = 'hidden';
     } catch {
       /* ignore */
     }
+
+    const titleText = opts.titleText != null ? opts.titleText : 'BAD END';
+    const subHtml = opts.subHtml != null ? opts.subHtml : null;
+    const subDefault = "Don't let cute things control you.";
 
     const layer = document.createElement('div');
     layer.id = 'nyan-hub-badend';
@@ -1099,26 +1106,64 @@
 
     const title = document.createElement('p');
     title.className = 'nyan-hub-badend__title font-pixel';
-    title.textContent = 'BAD END';
+    title.textContent = titleText;
 
     const sub = document.createElement('p');
     sub.className = 'nyan-hub-badend__sub';
-    sub.textContent = "Don't let cute things control you.";
+    if (subHtml) {
+      sub.innerHTML = subHtml;
+    } else {
+      sub.textContent = subDefault;
+    }
 
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'nyan-hub-badend__btn win-button font-pixel text-10 uppercase';
     btn.textContent = 'back to top';
 
-        btn.addEventListener('click', () => {
-          goTo('../index.html');
-        });
+    btn.addEventListener('click', () => {
+      goTo('../index.html');
+    });
 
     layer.appendChild(title);
     layer.appendChild(sub);
     layer.appendChild(btn);
     document.body.appendChild(layer);
   };
+
+  /** Subscription / Manage: confirm renewal → ironic BAD END (same style as NYAN cat). */
+  const initRenewConfirmBadEnd = () => {
+    const overlay = qs('[data-renew-confirm-overlay]');
+    if (!overlay) return;
+
+    const show = () => {
+      overlay.classList.remove('is-hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+    };
+    const hide = () => {
+      overlay.classList.add('is-hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+    };
+
+    qsa('[data-renew-confirm-trigger]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        show();
+      });
+    });
+
+    qs('[data-renew-confirm-close]')?.addEventListener('click', hide);
+
+    qs('[data-renew-confirm-ok]')?.addEventListener('click', () => {
+      hide();
+      appendNyanBadEndLayer({
+        subHtml:
+          "You've successfully renewed your subscription!<br><br>It's okay…<br>this happens more often than you think.",
+      });
+    });
+  };
+
+  initRenewConfirmBadEnd();
 
   /** NYANhub: click any video cover card (thumbnail grid block) → BAD END. */
   const initNyanHubCoverClickBadEnd = () => {

@@ -33,7 +33,7 @@
         <div class="manage-top">
           <p class="manage-label">Current Plan:</p>
           <div class="manage-plan">PRO PLAN</div>
-          <button class="manage-upgrade" type="button">Upgrade to higher level</button>
+          <button class="manage-upgrade" type="button" data-renew-confirm-trigger>Upgrade to higher level</button>
         </div>
 
         <section class="manage-options">
@@ -143,6 +143,34 @@
           <div class="cancel-actions">
             <button class="renew-button cancel-primary" type="button" data-cancel-primary>I'll keep my plan</button>
             <button class="cancel-secondary" type="button" data-cancel-continue>Continue to cancel membership</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="fixed inset-0 z-[56] flex items-center justify-center bg-black-50 p-4 is-hidden"
+      data-renew-confirm-overlay
+      aria-hidden="true"
+    >
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="renew-confirm-title-manage">
+        <div class="win-title-bar">
+          <span id="renew-confirm-title-manage" class="font-pixel text-10">Confirm renewal</span>
+          <button
+            class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red"
+            type="button"
+            data-renew-confirm-close
+            aria-label="Close"
+          >
+            X
+          </button>
+        </div>
+        <div class="p-6 bg-white text-center flex flex-col gap-4">
+          <p class="text-win-black text-sm font-bold leading-relaxed">
+            Confirm that you want to renew your subscription.
+          </p>
+          <div class="flex flex-wrap justify-center">
+            <button class="win-button px-6 bg-win-blue text-white border-win-black" type="button" data-renew-confirm-ok>OK</button>
           </div>
         </div>
       </div>

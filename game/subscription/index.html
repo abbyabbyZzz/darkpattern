@@ -36,7 +36,7 @@
         <div class="subscription-timer" data-subscription-countdown>24:00:00</div>
 
         <div class="subscription-actions">
-          <button class="renew-button" type="button">RENEW PLAN</button>
+          <button class="renew-button" type="button" data-renew-confirm-trigger>RENEW PLAN</button>
           <a href="../manage-subscription/" class="manage-link">manage subscription</a>
         </div>
       </section>
@@ -107,6 +107,34 @@
           <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
             OK
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="fixed inset-0 z-[55] flex items-center justify-center bg-black-50 p-4 is-hidden"
+      data-renew-confirm-overlay
+      aria-hidden="true"
+    >
+      <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="renew-confirm-title">
+        <div class="win-title-bar">
+          <span id="renew-confirm-title" class="font-pixel text-10">Confirm renewal</span>
+          <button
+            class="win-button p-0 px-2 leading-none bg-win-red text-white border-win-black hover-bg-white hover-text-win-red"
+            type="button"
+            data-renew-confirm-close
+            aria-label="Close"
+          >
+            X
+          </button>
+        </div>
+        <div class="p-6 bg-white text-center flex flex-col gap-4">
+          <p class="text-win-black text-sm font-bold leading-relaxed">
+            Confirm that you want to renew your subscription.
+          </p>
+          <div class="flex flex-wrap justify-center">
+            <button class="win-button px-6 bg-win-blue text-white border-win-black" type="button" data-renew-confirm-ok>OK</button>
+          </div>
         </div>
       </div>
     </div>
