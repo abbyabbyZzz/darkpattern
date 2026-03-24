@@ -90,7 +90,6 @@ nav {
 .bracket { color: var(--amber-light); }
 
 .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-
 .nav-links a {
   font-family: var(--px);
   font-size: 0.6875rem;
@@ -101,6 +100,14 @@ nav {
 }
 .nav-links a:hover,
 .nav-links a.active { color: var(--amber-light); }
+.nav-links a[href="#results"] {
+  color: var(--amber-light);
+}
+#nav #nav-results-link {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
 
 .nav-toggle {
   display: none; flex-direction: column; gap: 5px;
