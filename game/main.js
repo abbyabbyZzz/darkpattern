@@ -365,6 +365,7 @@
     subscriptionStart: 'subscriptionTrialStartAt',
     subscriptionCancelled: 'subscriptionCancelled',
     warningShownThisLoop: 'subscriptionWarningShownThisLoop',
+    timeoutBadEndShown: 'subscriptionTimeoutBadEndShown',
   };
   /** sessionStorage: NYANhub visits this “run” (reset when Start → Claim → home). */
   const NYAN_HUB_VISIT_KEY = 'trapNyanHubVisitsThisGame';
@@ -397,7 +398,7 @@
   };
   /** Saved on Claim: '1' = opted in, '0' = opted out (used for email toasts). Checkbox UI always defaults checked. */
   const PROMO_EMAIL_OPT_IN_KEY = 'promoEmailOptIn';
-  const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
+  const TRIAL_DURATION_MS = 10 * 60 * 1000;
   const TRIAL_WARNING_DELAY_MS = 5 * 1000;
 
   const isStartPage = () => document.body?.dataset?.startPage === 'true';
@@ -447,6 +448,30 @@
     }
   };
 
+  const markTimeoutBadEndShown = () => {
+    try {
+      sessionStorage.setItem(STORAGE_KEYS.timeoutBadEndShown, '1');
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const clearTimeoutBadEndShown = () => {
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.timeoutBadEndShown);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const hasShownTimeoutBadEnd = () => {
+    try {
+      return sessionStorage.getItem(STORAGE_KEYS.timeoutBadEndShown) === '1';
+    } catch {
+      return false;
+    }
+  };
+
   /**
    * Remaining trial ms: `null` = 24h countdown has not started yet (close the warning first).
    * `0` = subscription cancelled (in-game) or trial time fully elapsed.
@@ -462,7 +487,7 @@
   };
 
   const formatTrialCountdownMs = (ms) => {
-    if (ms === null) return '24:00:00';
+    if (ms === null) return '00:10:00';
     const total = Math.max(0, Math.floor(ms / 1000));
     const h = String(Math.floor(total / 3600)).padStart(2, '0');
     const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
@@ -471,7 +496,7 @@
   };
 
   const formatCancelRemainingText = (msLeft) => {
-    if (msLeft === null) return '24 hours left';
+    if (msLeft === null) return '10 minutes left';
     const ms = Math.max(0, msLeft);
     if (ms <= 0) return '0 minutes left';
     const day = 24 * 60 * 60 * 1000;
@@ -559,6 +584,7 @@
     clearWarningTimers();
     clearClaimBenefitsAt();
     clearWarningShownThisLoop();
+    clearTimeoutBadEndShown();
     clearSubscriptionCancelled();
     try {
       localStorage.removeItem(STORAGE_KEYS.subscriptionStart);
@@ -1251,6 +1277,76 @@
     });
   };
 
+  const showTimeoutRenewalModal = () => {
+    if (qs('[data-timeout-renew-modal]')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-60 flex items-center justify-center bg-black-50 p-4';
+    overlay.setAttribute('data-timeout-renew-modal', 'true');
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Renewal completed');
+
+    const win = document.createElement('div');
+    win.className = 'win-window max-w-md w-full';
+
+    const bar = document.createElement('div');
+    bar.className = 'win-title-bar';
+    bar.textContent = 'System Notice';
+
+    const body = document.createElement('div');
+    body.className = 'p-6 bg-white text-center flex flex-col gap-4';
+
+    const title = document.createElement('p');
+    title.className = 'font-pixel text-12 text-win-black';
+    title.textContent = 'Congratulations!';
+
+    const copy = document.createElement('p');
+    copy.className = 'text-win-black text-sm font-bold leading-relaxed';
+    copy.textContent = 'Your subscription renewal process has been completed.';
+
+    const ok = document.createElement('button');
+    ok.type = 'button';
+    ok.className = 'win-button px-6 bg-win-blue text-white border-win-black mx-auto';
+    ok.textContent = 'OK';
+
+    ok.addEventListener('click', () => {
+      overlay.remove();
+      appendNyanBadEndLayer({
+        subHtml:
+          "You've successfully renewed your subscription!<br><br>It's okay…<br>this happens more often than you think.",
+      });
+    });
+
+    body.appendChild(title);
+    body.appendChild(copy);
+    body.appendChild(ok);
+    win.appendChild(bar);
+    win.appendChild(body);
+    overlay.appendChild(win);
+    document.body.appendChild(overlay);
+  };
+
+  const initTrialTimeoutBadEnd = () => {
+    if (isStartPage() || isPopupDisabledPage()) return;
+    const startRaw = localStorage.getItem(STORAGE_KEYS.subscriptionStart);
+    if (!startRaw) return;
+    if (isSubscriptionCancelled()) return;
+    if (hasShownTimeoutBadEnd()) return;
+
+    const checkTimeout = () => {
+      if (hasShownTimeoutBadEnd()) return;
+      if (isSubscriptionCancelled()) return;
+      const left = getTrialMsLeft();
+      if (left !== 0) return;
+      markTimeoutBadEndShown();
+      showTimeoutRenewalModal();
+    };
+
+    checkTimeout();
+    window.setInterval(checkTimeout, 500);
+  };
+
   /** Clears NYANhub 2-minute BAD END timer (cover click / timeout share this). */
   let nyanHubBadEndTimerId = null;
 
@@ -1439,6 +1535,7 @@
   initNyanHubBadEnd();
   initNyanHubCoverClickBadEnd();
   initEndingPageFlow();
+  initTrialTimeoutBadEnd();
   initNyanAdPopups();
   initEmailPromoNotifications();
 })();

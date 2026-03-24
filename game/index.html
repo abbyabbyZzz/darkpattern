@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <!-- System warning: Claim benefits → 10s later; 24h countdown starts when player closes (OK / X / backdrop / Esc) -->
+    <!-- System warning: on home page after 5s; 10-minute countdown starts when player closes -->
     <div class="fixed inset-0 z-60 flex items-center justify-center bg-black-50 p-4 is-hidden" data-warning-overlay aria-hidden="true">
       <div class="win-window max-w-md w-full" role="dialog" aria-modal="true" aria-label="System Warning">
         <div class="win-title-bar">
@@ -115,10 +115,10 @@
         </div>
         <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
           <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
-            WARNING: Free trial will ends in 24hrs.
+            WARNING: Free trial ends in 10 minutes.
           </div>
           <div class="text-win-black text-sm font-bold">
-            Your account will be automatically charged for the Annual Plan upon expiration.
+            Your account will be automatically charged for the Annual Plan when the timer runs out.
           </div>
           <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
             OK
