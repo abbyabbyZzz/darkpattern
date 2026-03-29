@@ -369,6 +369,8 @@
   };
   /** sessionStorage: NYANhub visits this “run” (reset when Start → Claim → home). */
   const NYAN_HUB_VISIT_KEY = 'trapNyanHubVisitsThisGame';
+  /** sessionStorage: wall-clock timestamp (ms) when the next nyan ad should show; persists across game pages. */
+  const NYAN_AD_NEXT_AT_KEY = 'trapNyanAdNextAtMs';
   /** localStorage: claim time (must survive navigation; file:// paths often don’t share sessionStorage) */
   const CLAIM_BENEFITS_AT_KEY = 'trapClaimBenefitsAt';
 
@@ -514,22 +516,32 @@
     return `${mins} minutes left`;
   };
 
-  // ----- Trial warning: show 5s after entering home page; 24h countdown starts when player closes the warning -----
+  // ----- Trial warning: 5s after home; step1 OK → step2 copy; step2 OK / X / backdrop / Esc → close; countdown starts only after final dismiss -----
   const warningOverlay = qs('[data-warning-overlay]');
-  const warningCloseBtn = qs('[data-warning-close]');
-  const warningOkBtn = qs('[data-warning-ok]');
+  let warningUiStep = 1;
+
+  const resetWarningPanels = () => {
+    warningUiStep = 1;
+    const p1 = qs('[data-warning-panel="1"]');
+    const p2 = qs('[data-warning-panel="2"]');
+    if (p1) p1.classList.remove('is-hidden');
+    if (p2) p2.classList.add('is-hidden');
+  };
 
   const showWarningOverlay = () => {
     if (!warningOverlay) return;
     markWarningShownThisLoop();
+    resetWarningPanels();
     warningOverlay.classList.remove('is-hidden');
     warningOverlay.setAttribute('aria-hidden', 'false');
   };
-  const hideWarningOverlay = () => {
+
+  const finalizeWarningOverlay = () => {
     if (!warningOverlay) return;
     const wasVisible = !warningOverlay.classList.contains('is-hidden');
     warningOverlay.classList.add('is-hidden');
     warningOverlay.setAttribute('aria-hidden', 'true');
+    resetWarningPanels();
     if (wasVisible) {
       clearSubscriptionCancelled();
       try {
@@ -542,6 +554,23 @@
       const cr = qs('[data-cancel-remaining]');
       if (cr) cr.textContent = formatCancelRemainingText(getTrialMsLeft());
     }
+  };
+
+  const advanceWarningOverlay = () => {
+    if (!warningOverlay || warningOverlay.classList.contains('is-hidden')) return;
+    const p1 = qs('[data-warning-panel="1"]');
+    const p2 = qs('[data-warning-panel="2"]');
+    if (!p1 || !p2) {
+      finalizeWarningOverlay();
+      return;
+    }
+    if (warningUiStep === 1) {
+      warningUiStep = 2;
+      p1.classList.add('is-hidden');
+      p2.classList.remove('is-hidden');
+      return;
+    }
+    finalizeWarningOverlay();
   };
 
   let homeWarningTimeoutId = null;
@@ -564,13 +593,20 @@
     }, TRIAL_WARNING_DELAY_MS);
   };
 
-  warningCloseBtn?.addEventListener('click', hideWarningOverlay);
-  warningOkBtn?.addEventListener('click', hideWarningOverlay);
   warningOverlay?.addEventListener('click', (e) => {
-    if (e.target === warningOverlay) hideWarningOverlay();
+    if (e.target === warningOverlay) {
+      advanceWarningOverlay();
+      return;
+    }
+    if (e.target.closest('[data-warning-close]') || e.target.closest('[data-warning-ok]')) {
+      e.preventDefault();
+      advanceWarningOverlay();
+    }
   });
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideWarningOverlay();
+    if (e.key !== 'Escape') return;
+    if (!warningOverlay || warningOverlay.classList.contains('is-hidden')) return;
+    advanceWarningOverlay();
   });
 
   scheduleHomeWarning();
@@ -588,6 +624,7 @@
     clearSubscriptionCancelled();
     try {
       localStorage.removeItem(STORAGE_KEYS.subscriptionStart);
+      sessionStorage.removeItem(NYAN_AD_NEXT_AT_KEY);
     } catch {
       /* ignore */
     }
@@ -1009,7 +1046,7 @@
     window.setInterval(spawnEmailToast, 8000);
   };
 
-  /** Random interstitial “nyan ad” → NYANhub; tiny close; next show after random 20s–60s. Skipped on start page & nyan-hub. */
+  /** Nyan ad: every 20–40s while in game loop; timer persists across game pages via sessionStorage. */
   const initNyanAdPopups = () => {
     try {
       if (isStartPage() || isPopupDisabledPage()) return;
@@ -1017,8 +1054,8 @@
 
       const root = getSiteRoot();
       const nyanHubUrl = new URL('nyan-hub/index.html', root).href;
-      /** 20s–60s (inclusive) */
-      const randomPopupDelay = () => 20_000 + Math.floor(Math.random() * 40_001);
+      /** 20s–40s (inclusive), next interval also random */
+      const randomPopupDelayMs = () => 20_000 + Math.floor(Math.random() * 20_001);
 
       let timer = null;
 
@@ -1029,9 +1066,41 @@
         }
       };
 
-      const scheduleNext = () => {
+      const persistNextAt = (atMs) => {
+        try {
+          sessionStorage.setItem(NYAN_AD_NEXT_AT_KEY, String(atMs));
+        } catch {
+          /* ignore */
+        }
+      };
+
+      const readNextAt = () => {
+        try {
+          const raw = sessionStorage.getItem(NYAN_AD_NEXT_AT_KEY);
+          const n = raw ? parseInt(raw, 10) : NaN;
+          return Number.isFinite(n) ? n : null;
+        } catch {
+          return null;
+        }
+      };
+
+      const scheduleFromStoredOrRandom = () => {
+        let nextAt = readNextAt();
+        if (nextAt == null) {
+          nextAt = Date.now() + randomPopupDelayMs();
+          persistNextAt(nextAt);
+        }
+        const delay = Math.max(0, nextAt - Date.now());
         clearTimer();
-        timer = setTimeout(showPopup, randomPopupDelay());
+        timer = window.setTimeout(showPopup, delay);
+      };
+
+      const scheduleNextAfterClose = () => {
+        const ms = randomPopupDelayMs();
+        const nextAt = Date.now() + ms;
+        persistNextAt(nextAt);
+        clearTimer();
+        timer = window.setTimeout(showPopup, ms);
       };
 
       const removePopup = () => {
@@ -1040,6 +1109,7 @@
 
       const showPopup = () => {
         if (isStartPage()) return;
+        if (isPopupDisabledPage()) return;
         if (/\/nyan-hub\/?/i.test(window.location.pathname)) return;
         if (qs('#nyan-ad-popup')) return;
         clearTimer();
@@ -1086,7 +1156,7 @@
           e.stopPropagation();
           e.preventDefault();
           removePopup();
-          scheduleNext();
+          scheduleNextAfterClose();
         };
 
         closeBtn.addEventListener('click', onCloseOnly);
@@ -1098,12 +1168,18 @@
         });
       };
 
-      clearTimer();
-      timer = setTimeout(showPopup, randomPopupDelay());
+      scheduleFromStoredOrRandom();
 
       window.addEventListener(
         'pagehide',
         () => {
+          if (qs('#nyan-ad-popup')) {
+            try {
+              persistNextAt(Date.now() + randomPopupDelayMs());
+            } catch {
+              /* ignore */
+            }
+          }
           clearTimer();
         },
         { passive: true },

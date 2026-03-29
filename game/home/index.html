@@ -32,16 +32,27 @@
         <section class="relative w-full h-64 md-h-96 overflow-hidden win-border" aria-label="Promotional carousel">
           <div class="absolute inset-0" data-carousel-viewport>
             <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-blue is-active" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">THE FUTURE OF COMMERCE</h2>
+              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">SELL ANYWHERE, TO ANYONE</h2>
+              <p class="text-center text-lg font-medium mb-6 max-w-xl leading-relaxed">
+                Build your dream store. Grow without limits.
+              </p>
               <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Start your free trial today</button>
             </div>
             <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-green" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">SELL ANYWHERE, TO ANYONE</h2>
-              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Build your dream store</button>
+              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">SUBSCRIBE IN SECONDS</h2>
+              <p class="text-center text-lg font-medium mb-6 max-w-xl leading-relaxed">
+                Getting started is easy.<br />
+                Leaving… might take a little longer.
+              </p>
+              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Start your free trial today</button>
             </div>
             <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-8 bg-win-red" data-carousel-slide>
-              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">EMPOWERING ENTREPRENEURS</h2>
-              <button class="win-button bg-white text-win-black hover-bg-win-beige text-10 md-text-12" type="button">Join 1M+ businesses</button>
+              <h2 class="text-2xl md-text-5xl text-center mb-6 leading-tight font-pixel">EVERYTHING YOU NEED IS HERE</h2>
+              <p class="text-center text-lg font-medium max-w-xl leading-relaxed">
+                Adjust your settings.<br />
+                Manage your preferences.<br />
+                Everything is exactly where it should be.
+              </p>
             </div>
           </div>
           <div class="absolute bottom-6 left-1-2 translate-x--1-2 flex gap-3" aria-hidden="true" data-carousel-dots></div>
@@ -55,8 +66,7 @@
               <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
                 <h3 class="text-xl mb-6 font-pixel">RESIST THE DARK PATTERNS</h3>
                 <p class="text-lg leading-relaxed mb-8 font-medium">
-                  In "Subscription Trap: Escape the Dark Pattern", you are thrust into a digital nightmare.
-                  What started as a simple free trial has turned into a desperate race against time.
+                  This experience reveals how interfaces guide, delay, and manipulate your choices — often without you noticing.
                 </p>
                 <button class="win-button w-full mt-auto bg-win-pink text-12" type="button">LEARN MORE</button>
               </div>
@@ -64,10 +74,10 @@
             <div class="section-card flex flex-col h-full border-win-lavender">
               <div class="win-title-bar bg-win-lavender text-win-black">THE EXPERIENCE</div>
               <div class="p-10 bg-white flex-grow flex flex-col items-center text-center">
-                <h3 class="text-xl mb-6 font-pixel">BEAT THE CLOCK</h3>
-                <p class="text-xl leading-relaxed mb-8 font-medium">
-                  The interface you once trusted is now working against you, using every trick in the book
-                  to keep you subscribed. Every second counts.
+                <h3 class="text-xl mb-6 font-pixel">FIND YOUR WAY OUT</h3>
+                <p class="text-lg leading-relaxed mb-8 font-medium">
+                  The interface you trusted is now working against you.<br /><br />
+                  Navigate misleading options, hidden paths, and endless loops before time runs out.
                 </p>
                 <button class="win-button w-full mt-auto bg-win-lavender text-12" type="button">TRY DEMO</button>
               </div>
@@ -179,12 +189,25 @@
             </svg>
           </button>
         </div>
-        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white" data-warning-panel="1">
           <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
             WARNING: Free trial ends in 10 minutes.
           </div>
           <div class="text-win-black text-sm font-bold">
             Your account will be automatically charged for the Annual Plan when the timer runs out.
+          </div>
+          <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
+            OK
+          </button>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white is-hidden" data-warning-panel="2">
+          <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
+            You can cancel anytime.
+          </div>
+          <div class="text-win-black text-sm font-bold leading-relaxed">
+            Go ahead.<br /><br />
+            Find it.<br /><br />
+            If you can.
           </div>
           <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
             OK

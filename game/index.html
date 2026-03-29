@@ -113,12 +113,25 @@
             </svg>
           </button>
         </div>
-        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white">
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white" data-warning-panel="1">
           <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
             WARNING: Free trial ends in 10 minutes.
           </div>
           <div class="text-win-black text-sm font-bold">
             Your account will be automatically charged for the Annual Plan when the timer runs out.
+          </div>
+          <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
+            OK
+          </button>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center gap-4 bg-white is-hidden" data-warning-panel="2">
+          <div class="text-win-red text-lg leading-relaxed uppercase tracking-tighter font-pixel">
+            You can cancel anytime.
+          </div>
+          <div class="text-win-black text-sm font-bold leading-relaxed">
+            Go ahead.<br /><br />
+            Find it.<br /><br />
+            If you can.
           </div>
           <button class="win-button mt-2 text-12 px-8 bg-win-red text-white border-win-red" type="button" data-warning-ok>
             OK
