@@ -577,6 +577,18 @@ nav {
 .sprite-c { background: #1a7a40; }
 .sprite-d { background: #a05020; }
 
+
+/* Team profile images (replace original sprite letters) */
+.team-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border-radius: 6px;
+  border: 3px solid var(--purple-dark);
+  background: var(--cream);
+}
+
 .tm-name {
   font-family: var(--px);
   font-size: 0.5625rem;
