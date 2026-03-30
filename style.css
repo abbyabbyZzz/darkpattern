@@ -348,6 +348,26 @@ nav {
   letter-spacing: .06em;
 }
 .folder-row { display: flex; gap: .75rem; }
+/* Folder hover / click effect — same as px-btn */
+
+.px-folder-link {
+  display: inline-block;
+}
+
+.px-folder-link:hover .px-folder {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.px-folder {
+  box-shadow: 4px 4px 0 var(--purple-mid);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.px-folder-link:active .px-folder {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
 
 /* ═══════════════════════
    PLAY SECTION
